@@ -1,0 +1,7 @@
+{
+  "name": "new-app-festa",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
