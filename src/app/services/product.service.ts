@@ -8,9 +8,11 @@ import { Product } from '../interfaces/product';
 })
 export class ProductService {
   private productsCollection: AngularFirestoreCollection<Product>;
+  private categoriesCollection: AngularFirestoreCollection;
 
   constructor(private afs: AngularFirestore) {
     this.productsCollection = this.afs.collection<Product>('Products');
+    this.categoriesCollection = this.afs.collection('Categories');
   }
 
   getProducts() {
@@ -40,5 +42,17 @@ export class ProductService {
 
   deleteProduct(id: string) {
     return this.productsCollection.doc(id).delete();
+  }
+
+  getCategories() {
+    return this.categoriesCollection.snapshotChanges().pipe(
+      map(actions => {
+        return actions.map(a => {
+          const data = a.payload.doc.data();
+
+          return { ...data };
+        });
+      })
+    );
   }
 }

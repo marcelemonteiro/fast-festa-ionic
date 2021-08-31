@@ -1,20 +1,52 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content>
+  <ion-slides [options]="slideOpts" class="main-slides">
+    <ion-slide class="main-slides__slide">
+      <img src="https://image.freepik.com/vetores-gratis/modelo-de-banner-de-fabrica-de-bolo_23-2148861831.jpg">
+    </ion-slide>
+    <ion-slide class="main-slides__slide">
+      <img
+        src="https://p2.trrsf.com/image/fget/cf/600/400/images.terra.com/2020/10/21/bolo-de-chocolate-confeitado-50853-1024x752.jpg">
+    </ion-slide>
+  </ion-slides>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="categories">
+    <h2 class="title title_categories">Categorias</h2>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+    <ion-slides [options]="slideCategoryOpts">
+      <ion-slide *ngFor="let category of categories" class="categories__category">
+        <ion-avatar class="categories__category--image">
+          <img [src]="category.image">
+        </ion-avatar>
+        <ion-label class="categories__category--name">{{ category.name }}</ion-label>
+      </ion-slide>
+    </ion-slides>
   </div>
+
+
+  <h2 class="title title__products">Produtos</h2>
+
+  <ion-grid *ngFor="let product of products" class="products">
+    <ion-row class="products__product">
+      <ion-col [routerLink]="['/details/', product.id]" size="8">
+        <ion-label>
+          <h5>
+            {{ product.title }}
+          </h5>
+          <p>
+            {{ product.price | currency: 'BRL'}}
+          </p>
+          <p>
+            {{ product.shop }}
+          </p>
+        </ion-label>
+      </ion-col>
+
+      <ion-col [routerLink]="['/details/', product.id]" size="4">
+        <img class="products__product--image" [src]="product.image" [alt]="product.title">
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+
+
 </ion-content>
