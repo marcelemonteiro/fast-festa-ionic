@@ -74,20 +74,20 @@ export class HomePage {
     }
   }
 
-  async addToCart(idProduto: string, quantidade = 1) {
-    const isDuplicateId = this.cart.some(item => item[idProduto]);
-    try {
-      if (!isDuplicateId) {
-        await this.cartService.addProductToCart(idProduto, quantidade);
-        this.presentToast('Produto adicionado ao carrinho')
-      } else if (isDuplicateId) {
-        this.presentToast('Produto já adicionado ao carrinho')
-      }
+  // async addToCart(idProduto: string, quantidade = 1) {
+  //   const isDuplicateId = this.cart.some(item => item[idProduto]);
+  //   try {
+  //     if (!isDuplicateId) {
+  //       await this.cartService.addProductToCart(idProduto, quantidade);
+  //       this.presentToast('Produto adicionado ao carrinho')
+  //     } else if (isDuplicateId) {
+  //       this.presentToast('Produto já adicionado ao carrinho')
+  //     }
 
-    } catch (error) {
-      this.presentToast('Erro ao tentar salvar');
-    }
-  }
+  //   } catch (error) {
+  //     this.presentToast('Erro ao tentar salvar');
+  //   }
+  // }
 
   presentToast(message: string) {
     this.toastController.create({ message, duration: 2000, position: 'top' })

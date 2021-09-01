@@ -1,9 +1,64 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>cart</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content>
+  <ion-list class="products">
+    <ion-item-group *ngFor="let product of products" lines="none">
+      <ion-item class="products__product">
+        <ion-grid>
+          <ion-row>
+            <ion-col size="4">
+              <ion-img [src]="product.image" [alt]="product.title" class="products__product--image"></ion-img>
+            </ion-col>
 
+            <ion-col size="8">
+              <ion-row color="dark">
+                <ion-label class="products__product--info ion-text-wrap">
+                  <h2>{{ product.title }}</h2>
+                  <p>{{ product.shop }}</p>
+                  <ion-note color="dark"></ion-note>
+                  <ion-note color="primary">
+                    <strong>
+                        {{ product.price | currency: 'BRL'}}
+                    </strong>
+                  </ion-note>
+                </ion-label>
+              </ion-row>
+
+              <ion-row class="ion-margin-top">
+                <ion-button color="medium" fill="outline" shape="round" (click)="removeQuantidade(product.cartItemId, product.id)">
+                  <ion-icon slot="icon-only" name="remove"></ion-icon>
+                </ion-button>
+
+                <ion-input class="ion-text-center" type="number" [value]="product.quantidade" #inputQuantidade readonly>
+                </ion-input>
+
+                <ion-button color="medium" fill="outline" shape="round" (click)="addQuantidade(product.cartItemId, product.id)">
+                  <ion-icon slot="icon-only" name="add"></ion-icon>
+                </ion-button>
+
+                <ion-button fill="clear" size="icon-only" type="button" (click)="deleteProduct(product.cartItemId)">
+                  <ion-icon slot="icon-only" name="trash" size="small"></ion-icon>
+                </ion-button>
+
+              </ion-row>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+      </ion-item>
+
+    </ion-item-group>
+
+  </ion-list>
 </ion-content>
+<ion-footer>
+  <ion-item lines="none">
+    <ion-label>
+      Total
+    </ion-label>
+    <ion-text slot="end" color="primary">
+      <strong>
+          {{ 5 | currency: 'BRL'}}
+      </strong>
+    </ion-text>
+  </ion-item>
+  <ion-button expand="block" shape="round" class="ion-margin">Finalizar compra</ion-button>
+</ion-footer>
