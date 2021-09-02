@@ -32,7 +32,10 @@ export class DetailsPage implements OnInit {
 
     this.cartSubscription = this.cartService.getCart().subscribe(data => {
       this.cart = data;
-      console.log('c: ', this.cart)
+    });
+
+    this.productSubscription = this.productService.getProduct(this.productId).subscribe(data => {
+      this.product = data;
     });
   }
 
@@ -40,13 +43,8 @@ export class DetailsPage implements OnInit {
   }
 
   ngOnDestroy() {
-    if (this.productSubscription) this.productSubscription.unsubscribe();
-  }
-
-  loadProduct() {
-    this.productSubscription = this.productService.getProduct(this.productId).subscribe(data => {
-      this.product = data;
-    });
+    this.productSubscription.unsubscribe();
+    this.cartSubscription.unsubscribe();
   }
 
   async addToCart() {

@@ -32,8 +32,11 @@ export class ProductService {
     return this.productsCollection.add(product);
   }
 
-  getProduct(id: string) {
+  getProduct(id) {
     return this.productsCollection.doc<Product>(id).valueChanges();
+
+    // return this.productsCollection.doc(id).snapshotChanges();
+    
   }
 
   updateProduct(id: string, product: Product) {

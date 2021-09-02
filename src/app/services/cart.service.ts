@@ -6,15 +6,10 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class CartService {
-  cart = new Array();
   private cartCollection: AngularFirestoreCollection;
 
   constructor(private afs: AngularFirestore) {
     this.cartCollection = this.afs.collection('Cart');
-
-    this.getCart().subscribe(data => {
-      this.cart = data;
-    })
   }
 
   getCart() {

@@ -1,18 +1,3 @@
-.products {
-    // padding-bottom: 1rem;
-
-    &__product {
-        --padding-start: 0;
-        // --padding-bottom: 1rem;
-
-        &--image {
-            margin: 0;
-            width: 6rem;
-            transform: scale(0.8);
-        }
-
-        &--info {
-            display: block;
-        }
-    }
+ion-button {
+    --border-width: 1px;
 }

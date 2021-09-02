@@ -1,0 +1,53 @@
+<!-- <ion-item>
+  <ion-grid>
+    <ion-row class="ion-margin-top ion-justify-content-center ion-align-items-start">
+      <ion-col size="4">
+        <ion-img [src]="product.image" [alt]="product.title"></ion-img>
+      </ion-col>
+
+      <ion-col size="8">
+        <ion-row color="dark">
+          <ion-label>
+            <h2>{{ product.title }}</h2>
+            <p>{{ product.shop }}</p>
+            <ion-note color="dark"></ion-note>
+            <ion-note color="primary">
+              <strong>
+                {{ product.price | currency: 'BRL'}}
+              </strong>
+            </ion-note>
+          </ion-label>
+        </ion-row>
+
+        <ion-row class="ion-margin-top ion-align-items-center">
+          <ion-col size="3">
+            <ion-button color="dark" fill="outline" shape="round"
+              (click)="removeQuantidade(product.cartItemId, product.id)">
+              <ion-icon slot="icon-only" name="remove" size="small"></ion-icon>
+            </ion-button>
+          </ion-col>
+
+          <ion-col size="3">
+            <ion-input class="ion-text-center ion-no-padding" type="number" [value]="product.quantidade"
+              #inputQuantidade readonly>
+            </ion-input>
+          </ion-col>
+
+          <ion-col size="3">
+            <ion-button color="dark" fill="outline" shape="round"
+              (click)="addQuantidade(product.cartItemId, product.id)">
+              <ion-icon slot="icon-only" name="add" size="small"></ion-icon>
+            </ion-button>
+          </ion-col>
+
+          <ion-col size="3">
+            <ion-button color="dark" fill="clear" size="icon-only" (click)="deleteProduct(product.cartItemId)">
+              <ion-icon slot="icon-only" name="trash" size="small"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-item> -->
