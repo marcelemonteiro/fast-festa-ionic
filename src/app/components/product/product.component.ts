@@ -1,43 +1,33 @@
 import { ToastController } from '@ionic/angular';
 import { ProductService } from 'src/app/services/product.service';
 import { CartService } from './../../services/cart.service';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { Product } from 'src/app/interfaces/product';
 
 @Component({
   selector: 'app-product',
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.scss'],
 })
-export class ProductComponent implements OnInit {
+export class ProductComponent {
 
-  public product = {};
-  // private cart = [];
+  // product = {};
+  private cart = [];
   private cartSubscription: Subscription;
-  private productSubscription: Subscription;
-  @Input('idProduto') idProduto: string;
+  @Input() product;
 
   constructor(
     private cartService: CartService,
-    private productService: ProductService,
     private toastCtrl: ToastController
   ) { 
-    // this.cartSubscription = this.cartService.getCart().subscribe(data => {
+    // this.cartSubscription = this.cartService.getCart().pipe().subscribe(data => {
     //   this.cart = data;
     // });
 
-    this.productSubscription = this.productService.getProduct(this.idProduto).subscribe(data => {
-      this.product = data;
-      console.log('produto: ', data);
-    });
   }
 
-  ngOnInit() {}
-
   ngOnDestroy() {
-    this.productSubscription.unsubscribe();
-    this.cartSubscription.unsubscribe();
+    // this.cartSubscription.unsubscribe();
   }
 
   async deleteProduct(idCart: string) {
@@ -53,22 +43,22 @@ export class ProductComponent implements OnInit {
     toast.present();
   }
 
-  // addQuantidade(idCart: string, idProduto: string) {
-  //   let quantidade = this.getQuantidade(idProduto);
-  //   quantidade += 1;
-  //   this.cartService.updateProductInCart(idCart, idProduto, quantidade);
-  // }
+  addQuantidade(idCart: string, idProduto: string) {
+    this.cartService.incrementProduct(idCart, idProduto);
+  }
+  
+  removeQuantidade(idCart: string, idProduto: string) {
+    // this.getQuantidade(idProduto);
+    this.cartService.decrementProduct(idCart, idProduto);
+  }
 
-  // removeQuantidade(idCart: string, idProduto: string) {
-  //   let quantidade = this.getQuantidade(idProduto);
-  //   quantidade -= 1;
-  //   this.cartService.updateProductInCart(idCart, idProduto, quantidade);
-  // }
-
-  // getQuantidade(idProduto: string) {
-  //   const [product] = this.cart.filter(c => c[idProduto]);
-  //   const quantidade = product;
-  //   return quantidade[idProduto];
-  // }
+  getQuantidade(idProduto: string) {
+    const [product] = this.cart.filter(c => c[idProduto]);
+    const quantidade = product[idProduto];
+    
+    if (quantidade == 0) {
+      this.cartService.deleteProductFromCart(product.cartItemId);
+    }
+  }
 
 }
