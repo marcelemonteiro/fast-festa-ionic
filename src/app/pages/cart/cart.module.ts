@@ -1,4 +1,3 @@
-import { ProductComponentModule } from './../../components/product/product.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -15,7 +14,6 @@ import { CartPage } from './cart.page';
     FormsModule,
     IonicModule,
     CartPageRoutingModule,
-    ProductComponentModule
   ],
   declarations: [CartPage]
 })

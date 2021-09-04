@@ -49,13 +49,6 @@ export class DetailsPage implements OnInit {
 
   async addToCart() {
     const isDuplicateId = this.cart.some(item => item[this.productId]);
-    const isEmpty = this.cart.filter(item => item[this.productId] == 0);
-    const [isEmptyIdCart] = [...isEmpty];
-
-    if (isEmpty) {
-      await this.cartService.deleteProductFromCart(isEmptyIdCart.id);
-     }
-
     try {
       if (!isDuplicateId) {
         await this.cartService.addProductToCart(this.productId, 1);
