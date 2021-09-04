@@ -1,4 +1,7 @@
 <ion-content>
+  <div *ngIf="products.length == 0" class="flex ion-text-center ion-padding-top">
+    <ion-text color="medium">Carrinho vazio</ion-text>
+  </div>
   <ion-item *ngFor="let product of products" class="ion-no-padding" >
     <ion-grid (click)="goToDetails(product.id)" >
       <ion-row  class="ion-margin-top ion-justify-content-center ion-align-items-start">
@@ -6,7 +9,7 @@
           <img [src]="product.image" [alt]="product.iag" />
         </ion-col>
         
-        <ion-col size="8">
+        <ion-col size="7">
           <ion-row color="dark">
             <ion-label class="ion-text-wrap">
               <h2>{{ product.title }}</h2>
@@ -21,7 +24,7 @@
           </ion-row>
         </ion-col>
     
-        <ion-col size="1" >
+        <ion-col size="2" >
           <ion-row>
             <ion-button color="dark" fill="clear" size="small" (click)="deleteProduct(product.cartItemId, $event)">
               <ion-icon slot="icon-only" name="trash" size="small"></ion-icon>

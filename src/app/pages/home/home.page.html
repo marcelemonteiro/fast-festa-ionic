@@ -1,4 +1,7 @@
-<ion-content>
+<ion-header translucent>
+
+</ion-header>
+<ion-content fullscreen>
   <ion-slides [options]="slideOpts" class="main-slides">
     <ion-slide class="main-slides__slide">
       <img src="https://image.freepik.com/vetores-gratis/modelo-de-banner-de-fabrica-de-bolo_23-2148861831.jpg">
@@ -9,23 +12,17 @@
     </ion-slide>
   </ion-slides>
 
+  <h2 class="title title_categories">Categorias</h2>
   <div class="categories">
-    <h2 class="title title_categories">Categorias</h2>
-
-    <ion-slides [options]="slideCategoryOpts">
-      <ion-slide *ngFor="let category of categories" class="categories__category">
-        <ion-avatar class="categories__category--image">
-          <img [src]="category.image">
-        </ion-avatar>
-        <ion-label class="categories__category--name">{{ category.name }}</ion-label>
-      </ion-slide>
-    </ion-slides>
+    <ion-chip outline color="primary" *ngFor="let category of categories">
+      <ion-label color="primary">{{ category.name }}</ion-label>
+    </ion-chip>
   </div>
 
 
   <h2 class="title title__products">Produtos</h2>
 
-  <ion-grid *ngFor="let product of products" class="products" [routerLink]="['/details/', product.id]">
+  <ion-grid *ngFor="let product of products" class="products" (click)="navigateForward(product.id)">
     <ion-row class="products__product">
       <ion-col size="8">
         <ion-label>

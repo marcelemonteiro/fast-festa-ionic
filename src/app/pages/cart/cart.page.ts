@@ -36,7 +36,7 @@ export class CartPage {
         }
 
         this.products = productsRef;
-        const prices = this.products.map(p => p.price);
+        const prices = this.products.map(p => p.price * p.quantidade);
         const total = prices.reduce((previuos, current) => previuos + current, 0);
         this.totalPrice = total;
 
@@ -63,20 +63,4 @@ export class CartPage {
   goToDetails(id) {
     this.router.navigateByUrl(`/details/${id}`);
   }
-
-
-  getTotal() {
-    const prices = this.products.map(p => p.price as number);
-    const total = prices.reduce((previuos, current) => previuos + current, 0);
-    this.totalPrice = total;
-  }
-
-  // addQuantidade(idCart: string, idProduto: string) {
-  //   this.cartService.incrementProduct(idCart, idProduto);
-  // }
-  
-  // removeQuantidade(idCart: string, idProduto: string) {
-  //   // this.getQuantidade(idProduto);
-  //   this.cartService.decrementProduct(idCart, idProduto);
-  // }
 }

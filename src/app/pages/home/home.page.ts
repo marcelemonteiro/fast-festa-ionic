@@ -21,19 +21,14 @@ export class HomePage {
     loop: true
   }
 
-  slideCategoryOpts = {
-    slidesPerView: 3.5,
-    spaceBetween: 15,
-    loop: true
-  }
-
   private productsSubscription: Subscription;
   private categoriesSubscription: Subscription;
 
   constructor(
     private productService: ProductService,
     public loadingController: LoadingController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private navController: NavController
   ) {
     this.productsSubscription = this.productService.getProducts().subscribe(data => {
       this.products = data;
@@ -65,5 +60,10 @@ export class HomePage {
     this.toastController.create({ message, duration: 2000, position: 'top' })
       .then(toast => toast.present());
   }
+
+  navigateForward(id) {
+    this.navController.navigateForward(`/details/${id}`);
+  }
+
 
 }

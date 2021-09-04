@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CartService } from 'src/app/services/cart.service';
 import { ToastController, LoadingController, NavController } from '@ionic/angular';
 import { Product } from 'src/app/interfaces/product';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from 'src/app/services/product.service';
 
 @Component({
@@ -14,11 +14,16 @@ import { ProductService } from 'src/app/services/product.service';
 export class DetailsPage implements OnInit {
 
   loading: any;
-  public product: Product = {};
+  public product = {};
+  public quantidade = 1;
   private cart = [];
+  private idCart: string;
   private cartSubscription: Subscription;
   private productSubscription: Subscription;
   private productId: string = null;
+
+  @ViewChild('input', { static: true }) input: ElementRef;
+
 
   constructor(
     private cartService: CartService,
@@ -26,50 +31,81 @@ export class DetailsPage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private loadingCtrl: LoadingController,
     private toastController: ToastController,
-    private navCtrl: NavController
-  ) { 
+    private router: Router
+  ) {
     this.productId = this.activatedRoute.snapshot.params['id'];
 
     this.cartSubscription = this.cartService.getCart().subscribe(data => {
       this.cart = data;
+      const filtered = this.cart.filter(el => el[this.productId]);
+  
+      if (filtered.length != 0) {
+        const [cartProps] = [...filtered];
+        this.idCart = cartProps.id;
+        this.quantidade = cartProps[this.productId];
+      }
     });
 
+
     this.productSubscription = this.productService.getProduct(this.productId).subscribe(data => {
-      this.product = data;
+      this.product = { ...data };
     });
+
   }
 
   ngOnInit() {
   }
 
   ngOnDestroy() {
-    this.productSubscription.unsubscribe();
     this.cartSubscription.unsubscribe();
+    this.productSubscription.unsubscribe();
   }
 
   async addToCart() {
     const isDuplicateId = this.cart.some(item => item[this.productId]);
+    const quantidade = this.input.nativeElement.value;
+
     try {
       if (!isDuplicateId) {
-        await this.cartService.addProductToCart(this.productId, 1);
+        await this.cartService.addProductToCart(this.productId, quantidade);
         this.presentToast('Produto adicionado ao carrinho');
       } else if (isDuplicateId) {
-        this.presentToast('Produto já adicionado ao carrinho');
+        await this.cartService.updateCart(this.idCart, this.productId, quantidade)
+        this.presentToast('Produto atualizado adicionado ao carrinho');
       }
+
+      this.router.navigateByUrl('/cart');
 
     } catch (error) {
       this.presentToast('Erro ao tentar salvar');
     }
   }
 
+  getQuantidade() {
+    const filtered = this.cart.filter(el => el.id == this.idCart);
+    console.log(filtered);
+
+  }
+
   presentToast(message: string) {
-    this.toastController.create({ message, duration: 2000, position: 'top' })
+    this.toastController.create({ message, duration: 1000, position: 'top' })
       .then(toast => toast.present());
   }
 
   async presentLoading() {
     this.loading = await this.loadingCtrl.create({ message: 'Aguarde...' });
     return this.loading.present();
+  }
+
+  addQuantidade() {
+    ++this.input.nativeElement.value;
+  }
+
+  removeQuantidade() {
+    if (this.input.nativeElement.value == 1) {
+      return;
+    }
+    --this.input.nativeElement.value;
   }
 
 }

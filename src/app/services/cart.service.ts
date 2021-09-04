@@ -26,22 +26,28 @@ export class CartService {
     );
   }
 
-  incrementProduct(idCart: string, idProduto: string) {
-    this.cartCollection.doc(idCart).update({
-      [idProduto]: firebase.firestore.FieldValue.increment(1)
-    });
+  // incrementProduct(idCart: string, idProduto: string) {
+  //   this.cartCollection.doc(idCart).update({
+  //     [idProduto]: firebase.firestore.FieldValue.increment(1)
+  //   });
     
-  }
+  // }
 
-  decrementProduct(idCart: string, idProduto: string) {
-    this.cartCollection.doc(idCart).update({
-      [idProduto]: firebase.firestore.FieldValue.increment(-1)
-    });
+  // decrementProduct(idCart: string, idProduto: string) {
+  //   this.cartCollection.doc(idCart).update({
+  //     [idProduto]: firebase.firestore.FieldValue.increment(-1)
+  //   });
 
-  }
+  // }
 
   addProductToCart(idProduto: string, quantidade: number) {
     return this.cartCollection.add({
+      [idProduto]: quantidade
+    });
+  }
+
+  updateCart(idCart: string, idProduto: string, quantidade: number) {
+    return this.cartCollection.doc(idCart).update({
       [idProduto]: quantidade
     });
   }

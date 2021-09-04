@@ -1,7 +1,7 @@
 <ion-app>
   <ion-router-outlet></ion-router-outlet>
 
-  <ion-tabs>
+  <ion-tabs mode="md">
     <ion-tab-bar slot="bottom">
       <ion-tab-button routerLinkActive #home="routerLinkActive" routerLink="/home" class="ios" tab="home">
         <ion-icon [name]="home.isActive ? 'home' : 'home-outline' "></ion-icon>

@@ -1,3 +1,16 @@
-.ion-button {
-    --margin: 0;
+ion-button {
+    --width: 20px;
 }
+
+ion-grid {
+    --padding-start: 0;
+}
+
+.flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+

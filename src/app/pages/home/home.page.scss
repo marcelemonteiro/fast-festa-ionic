@@ -10,34 +10,11 @@
 
 .title {
   font-weight: 900;
-  padding: 0.5rem 0.8rem 0.8rem 0.8rem;
+  padding: 0.5rem 0.8rem 0.2rem 0.8rem;
 
   &__products {
     padding-top: 1.5rem;
     padding-bottom: 0;
-  }
-}
-
-.categories {
-
-  &__category {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    &--name {
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
-    }
-
-    &--image {
-      background-color: var(--ion-color-light);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
   }
 }
 
@@ -51,4 +28,10 @@
       border-radius: 0.5rem;
     }
   }
+}
+
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: 0.6rem;
 }
