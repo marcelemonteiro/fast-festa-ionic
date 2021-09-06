@@ -1,14 +1,19 @@
 <ion-content>
-  <div *ngIf="products.length == 0" class="flex ion-text-center ion-padding-top">
+  <div
+    *ngIf="products.length === 0"
+    class="flex ion-text-center ion-padding-top"
+  >
     <ion-text color="medium">Carrinho vazio</ion-text>
   </div>
-  <ion-item *ngFor="let product of products" class="ion-no-padding" >
-    <ion-grid (click)="goToDetails(product.id)" >
-      <ion-row  class="ion-margin-top ion-justify-content-center ion-align-items-start">
+  <ion-item *ngFor="let product of products" class="ion-no-padding">
+    <ion-grid (click)="presentModal(product.id)">
+      <ion-row
+        class="ion-margin-top ion-justify-content-center ion-align-items-start"
+      >
         <ion-col size="3">
           <img [src]="product.image" [alt]="product.iag" />
         </ion-col>
-        
+
         <ion-col size="7">
           <ion-row color="dark">
             <ion-label class="ion-text-wrap">
@@ -16,17 +21,20 @@
               <p>{{ product.shop }}</p>
               <p><strong>Quantidade: {{ product.quantidade }}</strong></p>
               <ion-note color="primary">
-                <strong>
-                  {{ product.price | currency: 'BRL'}}
-                </strong>
+                <strong> {{ product.price | currency: 'BRL'}} </strong>
               </ion-note>
             </ion-label>
           </ion-row>
         </ion-col>
-    
-        <ion-col size="2" >
+
+        <ion-col size="2">
           <ion-row>
-            <ion-button color="dark" fill="clear" size="small" (click)="deleteProduct(product.cartItemId, $event)">
+            <ion-button
+              color="dark"
+              fill="clear"
+              size="small"
+              (click)="deleteProduct(product.cartItemId, $event)"
+            >
               <ion-icon slot="icon-only" name="trash" size="small"></ion-icon>
             </ion-button>
           </ion-row>
@@ -34,18 +42,14 @@
       </ion-row>
     </ion-grid>
   </ion-item>
-</ion-content>
 
-<ion-footer>
-  <ion-item lines="none">
-    <ion-label>
-      Total
-    </ion-label>
-    <ion-text slot="end" color="primary">
-      <strong>
-        {{ totalPrice | currency: 'BRL'}}
-      </strong>
-    </ion-text>
-  </ion-item>
-  <ion-button expand="block" shape="round" class="ion-margin">Finalizar compra</ion-button>
-</ion-footer>
+  <ion-footer *ngIf="products.length !== 0">
+    <ion-item lines="none">
+      <ion-label> Total </ion-label>
+      <ion-text slot="end" color="primary">
+        <strong> {{ totalPrice | currency: 'BRL'}} </strong>
+      </ion-text>
+    </ion-item>
+    <ion-button expand="block" class="ion-margin">Finalizar compra</ion-button>
+  </ion-footer>
+</ion-content>
