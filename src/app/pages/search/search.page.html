@@ -1,3 +1,40 @@
 <ion-content>
-  <ion-searchbar mode="ios" placeholder="Produtos ou serviços..." animated autocomplete></ion-searchbar>
+  <ion-searchbar
+    (ionInput)="filterList($event)"
+    mode="ios"
+    placeholder="Produtos ou serviços..."
+    animated
+    autocomplete
+  ></ion-searchbar>
+  <div *ngIf="isProductsFiltered">
+    <ion-grid
+      *ngFor="let product of productList"
+      class="products"
+      (click)="presentModal(product.id)"
+    >
+      <ion-row class="product">
+        <ion-col size="8">
+          <ion-label>
+            <h5>{{ product.title }}</h5>
+            <ion-text color="primary">
+              <p>{{ product.price | currency: 'BRL'}}</p>
+            </ion-text>
+            <p>{{ product.shop }}</p>
+          </ion-label>
+        </ion-col>
+
+        <ion-col size="4">
+          <img
+            class="products__product--image"
+            [src]="product.image"
+            [alt]="product.title"
+          />
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <div *ngIf="!isProductsFiltered" class="flex ion-text-center ion-padding-top">
+    <ion-text color="medium">Ex: Kit festa para 10 pessoas...</ion-text>
+  </div>
 </ion-content>

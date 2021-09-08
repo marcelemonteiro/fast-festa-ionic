@@ -1,6 +1,6 @@
 <ion-content>
   <div
-    *ngIf="products.length === 0"
+    *ngIf="!isLoading && cart.length === 0"
     class="flex ion-text-center ion-padding-top"
   >
     <ion-text color="medium">Carrinho vazio</ion-text>

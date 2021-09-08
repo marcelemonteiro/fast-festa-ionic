@@ -1,5 +1,9 @@
 import { Component, OnDestroy } from '@angular/core';
-import { ModalController, ToastController } from '@ionic/angular';
+import {
+  ModalController,
+  ToastController,
+  LoadingController
+} from '@ionic/angular';
 import { ProductService } from 'src/app/services/product.service';
 import { CartService } from 'src/app/services/cart.service';
 import { Router } from '@angular/router';
@@ -10,13 +14,15 @@ import { DetailsPage } from '../details/details.page';
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.page.html',
-  styleUrls: ['./cart.page.scss'],
+  styleUrls: ['./cart.page.scss']
 })
 export class CartPage implements OnDestroy {
   public products = [];
   public totalPrice: number;
+  public isLoading: boolean;
+  public cart = [];
+  public loader: any;
   private cartSubscription: Subscription;
-  private cart = [];
   private productsSubscription: Subscription;
 
   constructor(
@@ -24,9 +30,11 @@ export class CartPage implements OnDestroy {
     private cartService: CartService,
     private toastCtrl: ToastController,
     private router: Router,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private loadingController: LoadingController
   ) {
     this.loadCart();
+    this.isLoading = true;
   }
 
   ngOnDestroy() {
@@ -34,26 +42,27 @@ export class CartPage implements OnDestroy {
     this.productsSubscription.unsubscribe();
   }
 
-  loadCart() {
-    this.cartSubscription = this.cartService.getCart().subscribe((data) => {
+  async loadCart() {
+    await this.presentLoading();
+    this.cartSubscription = await this.cartService.getCart().subscribe(data => {
       this.cart = data;
       console.log('cart: ', this.cart);
-
       this.loadProducts();
+      this.dismissLoader();
     });
   }
 
   loadProducts() {
     this.productsSubscription = this.productService
       .getProducts()
-      .subscribe((allProducts) => {
+      .subscribe(allProducts => {
         const addCartProps = (p: Product) => {
-          const [props] = this.cart.filter((c) => c[p.id]);
+          const [props] = this.cart.filter(c => c[p.id]);
           return { ...p, quantidade: props[p.id], cartItemId: props.id };
         };
 
         this.products = allProducts
-          .filter((p) => this.isProductInCart(p.id))
+          .filter(p => this.isProductInCart(p.id))
           .map(addCartProps);
 
         console.log('produtos', this.products);
@@ -63,12 +72,12 @@ export class CartPage implements OnDestroy {
   }
 
   isProductInCart(idProduto: string) {
-    const filter = this.cart.some((c) => c[idProduto]);
+    const filter = this.cart.some(c => c[idProduto]);
     return filter;
   }
 
   getTotalPrice() {
-    const prices = this.products.map((p) => p.price * p.quantidade);
+    const prices = this.products.map(p => p.price * p.quantidade);
     const total = prices.reduce((previuos, current) => previuos + current, 0);
     this.totalPrice = total;
   }
@@ -83,12 +92,32 @@ export class CartPage implements OnDestroy {
   }
 
   async presentToast(message: string) {
-    const toast = await this.toastCtrl.create({ message, duration: 2000 });
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 2000
+    });
     toast.present();
   }
 
+  async presentLoading() {
+    this.loader = await this.loadingController.create({
+      cssClass: 'my-custom-class'
+    });
+    await this.loader.present();
+  }
+
+  async dismissLoader() {
+    let topLoader = await this.loadingController.getTop();
+    while (topLoader) {
+      if (!(await topLoader.dismiss())) {
+        break;
+      }
+      topLoader = await this.loadingController.getTop();
+    }
+  }
+
   async presentModal(idProduto: string) {
-    const [product] = this.products.filter((p) => p.id === idProduto);
+    const [product] = this.products.filter(p => p.id === idProduto);
 
     const modal = await this.modalCtrl.create({
       component: DetailsPage,
@@ -100,8 +129,8 @@ export class CartPage implements OnDestroy {
         shop: product.shop,
         price: product.price,
         quantidade: product.quantidade,
-        description: product.description,
-      },
+        description: product.description
+      }
     });
     modal.present();
   }

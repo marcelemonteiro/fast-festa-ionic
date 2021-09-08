@@ -1,0 +1,12 @@
+.product {
+  animation: animatedProduct 200ms ease-in-out both;
+}
+
+@keyframes animatedProduct {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
