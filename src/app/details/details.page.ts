@@ -44,7 +44,6 @@ export class DetailsPage implements OnDestroy {
   async getCart() {
     this.cartSubscription = this.cartService.getCart().subscribe(data => {
       this.cart = data;
-      console.log(this.cart);
     });
   }
 

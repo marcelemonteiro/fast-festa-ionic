@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Fast Festas Login</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content mode="md">
+  <ion-list>
+    <ion-item color="light" class="ion-margin" lines="none">
+      <ion-input type="text" placeholder="Usuário" clearInput></ion-input>
+    </ion-item>
+
+    <ion-item color="light" class="ion-margin" lines="none">
+      <ion-input type="text" placeholder="Senha" clearInput></ion-input>
+    </ion-item>
+  </ion-list>
+  <ion-button
+    class="ion-margin-start ion-margin-end"
+    color="primary"
+    expand="block"
+    >Entrar
+  </ion-button>
+</ion-content>
+<ion-footer class="ion-no-border">
+  <ion-toolbar class="ion-text-center">
+    <p>
+      Ainda não tem uma conta?
+      <ion-text color="primary" (click)="presentModalRegister()">
+        <strong>Cadastre-se</strong>
+      </ion-text>
+    </p>
+  </ion-toolbar>
+</ion-footer>

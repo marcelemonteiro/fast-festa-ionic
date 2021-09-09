@@ -1,27 +1,3 @@
 <ion-app>
   <ion-router-outlet></ion-router-outlet>
-
-  <ion-tabs mode="md">
-    <ion-tab-bar slot="bottom">
-      <ion-tab-button routerLinkActive #home="routerLinkActive" routerLink="/home" class="ios" tab="home">
-        <ion-icon [name]="home.isActive ? 'home' : 'home-outline' "></ion-icon>
-        <ion-label>Principal</ion-label>
-      </ion-tab-button>
-
-      <ion-tab-button routerLinkActive #search="routerLinkActive" routerLink="/search" class="ios" tab="search">
-        <ion-icon [name]="search.isActive ? 'search' : 'search-outline' "></ion-icon>
-        <ion-label>Pesquisa</ion-label>
-      </ion-tab-button>
-
-      <ion-tab-button routerLinkActive #cart="routerLinkActive" routerLink="/cart" class="ios" tab="cart">
-        <ion-icon [name]="cart.isActive ? 'cart' : 'cart-outline' "></ion-icon>
-        <ion-label>Carrinho</ion-label>
-      </ion-tab-button>
-
-      <ion-tab-button routerLinkActive #profile="routerLinkActive" routerLink="/profile" class="ios" tab="profile">
-        <ion-icon [name]="profile.isActive ? 'person' : 'person-outline' "></ion-icon>
-        <ion-label>Perfil</ion-label>
-      </ion-tab-button>
-    </ion-tab-bar>
-  </ion-tabs>
 </ion-app>

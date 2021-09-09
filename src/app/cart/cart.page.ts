@@ -46,7 +46,6 @@ export class CartPage implements OnDestroy {
     await this.presentLoading();
     this.cartSubscription = await this.cartService.getCart().subscribe(data => {
       this.cart = data;
-      console.log('cart: ', this.cart);
       this.loadProducts();
       this.dismissLoader();
     });
@@ -64,8 +63,6 @@ export class CartPage implements OnDestroy {
         this.products = allProducts
           .filter(p => this.isProductInCart(p.id))
           .map(addCartProps);
-
-        console.log('produtos', this.products);
 
         this.getTotalPrice();
       });

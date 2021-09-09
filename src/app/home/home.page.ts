@@ -21,6 +21,7 @@ export class HomePage implements OnInit {
   public cartList: any[];
   public productList: any[];
   public categoryList: any[];
+  public showTabs: boolean;
 
   public slideOpts = {
     slidesPerView: 1.2,
@@ -35,7 +36,9 @@ export class HomePage implements OnInit {
     private toastController: ToastController,
     private navController: NavController,
     private modalCtrl: ModalController
-  ) {}
+  ) {
+    this.showTabs = true;
+  }
 
   async ngOnInit() {
     this.cartList = await this.loadCart();
@@ -78,7 +81,6 @@ export class HomePage implements OnInit {
     const categoryListFiltered = categoryList.filter(
       (p, index) => categoryList.indexOf(p) === index
     );
-    console.log(categoryListFiltered);
 
     return categoryListFiltered;
   }

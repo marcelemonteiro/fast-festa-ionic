@@ -1,0 +1,29 @@
+<ion-header class="ion-no-border" mode="ios">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismissModal()" fill="solid" color="light">
+        <ion-icon name="arrow-back" slot="icon-only" color="primary"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Cadastro</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content mode="md">
+  <ion-list>
+    <ion-item color="light" class="ion-margin" lines="none">
+      <ion-input type="text" placeholder="Usuário" clearInput></ion-input>
+    </ion-item>
+
+    <ion-item color="light" class="ion-margin" lines="none">
+      <ion-input type="text" placeholder="Senha" clearInput></ion-input>
+    </ion-item>
+  </ion-list>
+  <ion-button
+    class="ion-margin-start ion-margin-end"
+    color="primary"
+    expand="block"
+  >
+    Cadastrar
+  </ion-button>
+</ion-content>
