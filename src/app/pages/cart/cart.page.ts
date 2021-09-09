@@ -69,6 +69,10 @@ export class CartPage implements OnDestroy {
 
         this.getTotalPrice();
       });
+
+    if (this.cart.length === 0) {
+      this.isLoading = false;
+    }
   }
 
   isProductInCart(idProduto: string) {

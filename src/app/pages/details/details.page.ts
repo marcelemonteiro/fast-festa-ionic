@@ -71,13 +71,14 @@ export class DetailsPage implements OnDestroy {
         this.dismissLoader();
       }
     } catch (error) {
-      this.presentToast('Erro ao tentar salvar');
+      this.presentToast('Não foi possível adicionar ao carrinho');
+      this.dismissLoader();
     }
   }
 
   presentToast(message: string) {
     this.toastController
-      .create({ message, duration: 1000, position: 'top', color: 'light' })
+      .create({ message, duration: 1000, position: 'top', color: 'dark' })
       .then(toast => toast.present());
   }
 

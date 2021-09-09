@@ -15,17 +15,22 @@
 
   <h2 class="title title_categories">Categorias</h2>
   <div class="categories">
-    <ion-chip outline color="primary" *ngFor="let category of categories">
-      <ion-label color="primary">{{ category.name }}</ion-label>
+    <ion-chip
+      outline
+      color="primary"
+      *ngFor="let category of categoryList"
+      [routerLink]="['/category', category]"
+    >
+      <ion-label color="primary">{{ category }}</ion-label>
     </ion-chip>
   </div>
 
   <h2 class="title title__products">Produtos</h2>
 
   <ion-grid
-    *ngFor="let product of products"
+    *ngFor="let product of productList"
     class="products"
-    (click)="presentModal(product.id)"
+    (click)="presentModalDetails(product.id)"
   >
     <ion-row class="products__product">
       <ion-col size="8">

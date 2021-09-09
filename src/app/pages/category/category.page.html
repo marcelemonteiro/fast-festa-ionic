@@ -1,0 +1,38 @@
+<ion-header class="ion-no-border" mode="ios">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button routerLink="/" fill="solid" color="light">
+        <ion-icon name="arrow-back" slot="icon-only" color="primary"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ category }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid
+    *ngFor="let product of productList"
+    class="products"
+    (click)="presentModalDetails(product.id)"
+  >
+    <ion-row class="product">
+      <ion-col size="8">
+        <ion-label>
+          <h5>{{ product.title }}</h5>
+          <ion-text color="primary">
+            <p>{{ product.price | currency: 'BRL'}}</p>
+          </ion-text>
+          <p>{{ product.shop }}</p>
+        </ion-label>
+      </ion-col>
+
+      <ion-col size="4">
+        <img
+          class="products__product--image"
+          [src]="product.image"
+          [alt]="product.title"
+        />
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

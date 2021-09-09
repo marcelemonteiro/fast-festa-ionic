@@ -15,16 +15,12 @@ import { Product } from 'src/app/interfaces/product';
 })
 export class SearchPage {
   public loader: any;
-  public cart: any[];
+  public cartList: any[];
   public productList: any[];
   public productListBackup: any[];
   public isProductsFiltered: boolean;
-  private productsSubscription: Subscription;
-  private cartSubscription: Subscription;
 
   constructor(
-    private db: AngularFirestore,
-    private loadingController: LoadingController,
     private modalCtrl: ModalController,
     private cartService: CartService,
     private productService: ProductService
@@ -33,30 +29,47 @@ export class SearchPage {
   }
 
   async ngOnInit() {
-    this.productList = await this.initializeItems();
+    this.cartList = await this.loadCart();
+    this.productList = await this.loadProducts();
   }
 
-  async initializeItems(): Promise<any> {
-    const productList = await this.db
-      .collection('Products')
-      .valueChanges()
+  async loadProducts(): Promise<any> {
+    const allProducts = await this.productService
+      .getProducts()
       .pipe(first())
       .toPromise();
-    this.productListBackup = productList;
+
+    const addCartProps = (p: Product) => {
+      const [props] = this.cartList.filter(c => c[p.id]);
+      if (props) {
+        return { ...p, quantidade: props[p.id], cartItemId: props.id };
+      } else {
+        return { ...p, quantidade: 1, cartItemId: 0 };
+      }
+    };
+
+    const productList = allProducts.map(addCartProps);
     return productList;
   }
 
+  async loadCart(): Promise<any> {
+    const cartList = await this.cartService
+      .getCart()
+      .pipe(first())
+      .toPromise();
+
+    return cartList;
+  }
+
   async filterList(event: any) {
-    this.productList = this.productListBackup;
+    this.productList = await this.loadProducts();
     const searchTerm = event.srcElement.value;
     if (!searchTerm) {
       this.productList = [];
       return;
     }
 
-    this.isProductsFiltered = true;
-
-    this.productList = await this.productList.filter(currentProduct => {
+    this.productList = this.productList.filter(currentProduct => {
       if (currentProduct.title && searchTerm) {
         return (
           currentProduct.title.toLowerCase().indexOf(searchTerm.toLowerCase()) >
@@ -64,9 +77,10 @@ export class SearchPage {
         );
       }
     });
+    this.isProductsFiltered = true;
   }
 
-  async presentModal(idProduto: string) {
+  async presentModalDetails(idProduto: string) {
     const [product] = this.productList.filter(p => p.id === idProduto);
 
     const modal = await this.modalCtrl.create({

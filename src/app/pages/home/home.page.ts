@@ -1,35 +1,32 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   LoadingController,
   ModalController,
   NavController,
-  ToastController,
+  ToastController
 } from '@ionic/angular';
-import { Subscription } from 'rxjs';
+import { first } from 'rxjs/operators';
 import { Product } from 'src/app/interfaces/product';
 import { CartService } from 'src/app/services/cart.service';
 import { ProductService } from 'src/app/services/product.service';
+import { CategoryPage } from '../category/category.page';
 import { DetailsPage } from '../details/details.page';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  styleUrls: ['home.page.scss']
 })
-export class HomePage implements OnDestroy {
-  products = [];
-  categories = [];
+export class HomePage implements OnInit {
+  public cartList: any[];
+  public productList: any[];
+  public categoryList: any[];
 
-  slideOpts = {
+  public slideOpts = {
     slidesPerView: 1.2,
     spaceBetween: 15,
-    loop: true,
+    loop: true
   };
-
-  private cart = [];
-  private productsSubscription: Subscription;
-  private categoriesSubscription: Subscription;
-  private cartSubscription: Subscription;
 
   constructor(
     private productService: ProductService,
@@ -38,50 +35,52 @@ export class HomePage implements OnDestroy {
     private toastController: ToastController,
     private navController: NavController,
     private modalCtrl: ModalController
-  ) {
-    this.loadCart();
-    this.loadCategories();
+  ) {}
+
+  async ngOnInit() {
+    this.cartList = await this.loadCart();
+    this.productList = await this.loadProducts();
+    this.categoryList = await this.loadCategories();
   }
 
-  loadCart() {
-    this.cartSubscription = this.cartService.getCart().subscribe((data) => {
-      this.cart = data;
-      console.log('cart: ', this.cart);
-
-      this.loadProducts();
-    });
-  }
-
-  loadProducts() {
-    this.productsSubscription = this.productService
+  async loadProducts(): Promise<any> {
+    const allProducts = await this.productService
       .getProducts()
-      .subscribe((allProducts) => {
-        const addCartProps = (p: Product) => {
-          const [props] = this.cart.filter((c) => c[p.id]);
-          if (props) {
-            return { ...p, quantidade: props[p.id], cartItemId: props.id };
-          } else {
-            return { ...p, quantidade: 1, cartItemId: 0 };
-          }
-        };
+      .pipe(first())
+      .toPromise();
 
-        this.products = allProducts.map(addCartProps);
-        console.log('products: ', this.products);
-      });
+    const addCartProps = (p: Product) => {
+      const [props] = this.cartList.filter(c => c[p.id]);
+      if (props) {
+        return { ...p, quantidade: props[p.id], cartItemId: props.id };
+      } else {
+        return { ...p, quantidade: 1, cartItemId: 0 };
+      }
+    };
+
+    const productList = allProducts.map(addCartProps);
+    return productList;
   }
 
-  loadCategories() {
-    this.categoriesSubscription = this.productService
-      .getCategories()
-      .subscribe((data) => {
-        this.categories = data;
-        console.log('categorias', this.categories);
-      });
+  async loadCart(): Promise<any> {
+    const cartList = await this.cartService
+      .getCart()
+      .pipe(first())
+      .toPromise();
+
+    return cartList;
   }
 
-  ngOnDestroy() {
-    this.productsSubscription.unsubscribe();
-    this.categoriesSubscription.unsubscribe();
+  async loadCategories(): Promise<any> {
+    const allProducts = this.productList;
+    const categoryList = allProducts.map(p => p.category);
+
+    const categoryListFiltered = categoryList.filter(
+      (p, index) => categoryList.indexOf(p) === index
+    );
+    console.log(categoryListFiltered);
+
+    return categoryListFiltered;
   }
 
   async deleteProduct(id: string) {
@@ -92,8 +91,8 @@ export class HomePage implements OnDestroy {
     }
   }
 
-  async presentModal(idProduto: string) {
-    const [product] = this.products.filter((p) => p.id === idProduto);
+  async presentModalDetails(idProduto: string) {
+    const [product] = this.productList.filter(p => p.id === idProduto);
 
     const modal = await this.modalCtrl.create({
       component: DetailsPage,
@@ -105,8 +104,8 @@ export class HomePage implements OnDestroy {
         shop: product.shop,
         price: product.price,
         quantidade: product.quantidade,
-        description: product.description,
-      },
+        description: product.description
+      }
     });
     modal.present();
   }
@@ -114,7 +113,7 @@ export class HomePage implements OnDestroy {
   presentToast(message: string) {
     this.toastController
       .create({ message, duration: 2000, position: 'top' })
-      .then((toast) => toast.present());
+      .then(toast => toast.present());
   }
 
   navigateForward(id: string) {

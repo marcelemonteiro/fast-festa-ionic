@@ -5,39 +5,44 @@ const routes: Routes = [
   {
     path: 'home',
     loadChildren: () =>
-      import('./pages/home/home.module').then((m) => m.HomePageModule),
+      import('./pages/home/home.module').then(m => m.HomePageModule)
   },
   {
     path: '',
     redirectTo: 'home',
-    pathMatch: 'full',
+    pathMatch: 'full'
   },
   {
     path: 'cart',
     loadChildren: () =>
-      import('./pages/cart/cart.module').then((m) => m.CartPageModule),
+      import('./pages/cart/cart.module').then(m => m.CartPageModule)
   },
   {
     path: 'profile',
     loadChildren: () =>
-      import('./pages/profile/profile.module').then((m) => m.ProfilePageModule),
+      import('./pages/profile/profile.module').then(m => m.ProfilePageModule)
   },
   {
     path: 'search',
     loadChildren: () =>
-      import('./pages/search/search.module').then((m) => m.SearchPageModule),
+      import('./pages/search/search.module').then(m => m.SearchPageModule)
   },
   {
     path: 'details',
     loadChildren: () =>
-      import('./pages/details/details.module').then((m) => m.DetailsPageModule),
+      import('./pages/details/details.module').then(m => m.DetailsPageModule)
   },
+  {
+    path: 'category/:category',
+    loadChildren: () =>
+      import('./pages/category/category.module').then(m => m.CategoryPageModule)
+  }
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }),
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
   ],
-  exports: [RouterModule],
+  exports: [RouterModule]
 })
 export class AppRoutingModule {}
