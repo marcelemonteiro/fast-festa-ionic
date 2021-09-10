@@ -7,17 +7,28 @@
 <ion-content mode="md">
   <ion-list>
     <ion-item color="light" class="ion-margin" lines="none">
-      <ion-input type="text" placeholder="Usuário" clearInput></ion-input>
+      <ion-input
+        type="text"
+        placeholder="Usuário"
+        [(ngModel)]="userLogin.email"
+        clearInput
+      ></ion-input>
     </ion-item>
 
     <ion-item color="light" class="ion-margin" lines="none">
-      <ion-input type="text" placeholder="Senha" clearInput></ion-input>
+      <ion-input
+        type="password"
+        placeholder="Senha"
+        [(ngModel)]="userLogin.password"
+        clearInput
+      ></ion-input>
     </ion-item>
   </ion-list>
   <ion-button
     class="ion-margin-start ion-margin-end"
     color="primary"
     expand="block"
+    (click)="login()"
     >Entrar
   </ion-button>
 </ion-content>
