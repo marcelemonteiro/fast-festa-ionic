@@ -3,11 +3,10 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { User } from '../interfaces/user';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-
-  constructor(private auth: AngularFireAuth) { }
+  constructor(private auth: AngularFireAuth) {}
 
   login(user: User) {
     return this.auth.signInWithEmailAndPassword(user.email, user.password);
@@ -19,5 +18,9 @@ export class AuthService {
 
   logout() {
     return this.auth.signOut();
+  }
+
+  getAuth() {
+    return this.auth;
   }
 }

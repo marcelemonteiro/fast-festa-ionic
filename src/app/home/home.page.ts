@@ -3,7 +3,7 @@ import {
   LoadingController,
   ModalController,
   NavController,
-  ToastController
+  ToastController,
 } from '@ionic/angular';
 import { first } from 'rxjs/operators';
 import { Product } from 'src/app/interfaces/product';
@@ -15,7 +15,7 @@ import { DetailsPage } from '../details/details.page';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss']
+  styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
   public cartList: any[];
@@ -26,7 +26,7 @@ export class HomePage implements OnInit {
   public slideOpts = {
     slidesPerView: 1.2,
     spaceBetween: 15,
-    loop: true
+    loop: true,
   };
 
   constructor(
@@ -53,7 +53,7 @@ export class HomePage implements OnInit {
       .toPromise();
 
     const addCartProps = (p: Product) => {
-      const [props] = this.cartList.filter(c => c[p.id]);
+      const [props] = this.cartList.filter((c) => c[p.id]);
       if (props) {
         return { ...p, quantidade: props[p.id], cartItemId: props.id };
       } else {
@@ -66,17 +66,14 @@ export class HomePage implements OnInit {
   }
 
   async loadCart(): Promise<any> {
-    const cartList = await this.cartService
-      .getCart()
-      .pipe(first())
-      .toPromise();
+    const cartList = await this.cartService.getCart().pipe(first()).toPromise();
 
     return cartList;
   }
 
   async loadCategories(): Promise<any> {
     const allProducts = this.productList;
-    const categoryList = allProducts.map(p => p.category);
+    const categoryList = allProducts.map((p) => p.category);
 
     const categoryListFiltered = categoryList.filter(
       (p, index) => categoryList.indexOf(p) === index
@@ -94,20 +91,20 @@ export class HomePage implements OnInit {
   }
 
   async presentModalDetails(idProduto: string) {
-    const [product] = this.productList.filter(p => p.id === idProduto);
+    const [product] = this.productList.filter((p) => p.id === idProduto);
 
     const modal = await this.modalCtrl.create({
       component: DetailsPage,
+      cssClass: 'my-custom-class',
       componentProps: {
         id: product.id,
-        cartItemId: product.cartItemId,
         title: product.title,
         image: product.image,
         shop: product.shop,
         price: product.price,
         quantidade: product.quantidade,
-        description: product.description
-      }
+        description: product.description,
+      },
     });
     modal.present();
   }
@@ -115,7 +112,7 @@ export class HomePage implements OnInit {
   presentToast(message: string) {
     this.toastController
       .create({ message, duration: 2000, position: 'top' })
-      .then(toast => toast.present());
+      .then((toast) => toast.present());
   }
 
   navigateForward(id: string) {

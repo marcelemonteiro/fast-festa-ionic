@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import {
   ModalController,
   ToastController,
-  LoadingController
+  LoadingController,
 } from '@ionic/angular';
 import { ProductService } from 'src/app/services/product.service';
 import { CartService } from 'src/app/services/cart.service';
@@ -14,7 +14,7 @@ import { DetailsPage } from '../details/details.page';
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.page.html',
-  styleUrls: ['./cart.page.scss']
+  styleUrls: ['./cart.page.scss'],
 })
 export class CartPage implements OnDestroy {
   public products = [];
@@ -44,24 +44,26 @@ export class CartPage implements OnDestroy {
 
   async loadCart() {
     await this.presentLoading();
-    this.cartSubscription = await this.cartService.getCart().subscribe(data => {
-      this.cart = data;
-      this.loadProducts();
-      this.dismissLoader();
-    });
+    this.cartSubscription = await this.cartService
+      .getCart()
+      .subscribe((data) => {
+        this.cart = data;
+        this.loadProducts();
+        this.dismissLoader();
+      });
   }
 
   loadProducts() {
     this.productsSubscription = this.productService
       .getProducts()
-      .subscribe(allProducts => {
+      .subscribe((allProducts) => {
         const addCartProps = (p: Product) => {
-          const [props] = this.cart.filter(c => c[p.id]);
+          const [props] = this.cart.filter((c) => c[p.id]);
           return { ...p, quantidade: props[p.id], cartItemId: props.id };
         };
 
         this.products = allProducts
-          .filter(p => this.isProductInCart(p.id))
+          .filter((p) => this.isProductInCart(p.id))
           .map(addCartProps);
 
         this.getTotalPrice();
@@ -73,12 +75,12 @@ export class CartPage implements OnDestroy {
   }
 
   isProductInCart(idProduto: string) {
-    const filter = this.cart.some(c => c[idProduto]);
+    const filter = this.cart.some((c) => c[idProduto]);
     return filter;
   }
 
   getTotalPrice() {
-    const prices = this.products.map(p => p.price * p.quantidade);
+    const prices = this.products.map((p) => p.price * p.quantidade);
     const total = prices.reduce((previuos, current) => previuos + current, 0);
     this.totalPrice = total;
   }
@@ -95,14 +97,14 @@ export class CartPage implements OnDestroy {
   async presentToast(message: string) {
     const toast = await this.toastCtrl.create({
       message,
-      duration: 2000
+      duration: 2000,
     });
     toast.present();
   }
 
   async presentLoading() {
     this.loader = await this.loadingController.create({
-      cssClass: 'my-custom-class'
+      cssClass: 'my-custom-class',
     });
     await this.loader.present();
   }
@@ -118,20 +120,19 @@ export class CartPage implements OnDestroy {
   }
 
   async presentModal(idProduto: string) {
-    const [product] = this.products.filter(p => p.id === idProduto);
+    const [product] = this.products.filter((p) => p.id === idProduto);
 
     const modal = await this.modalCtrl.create({
       component: DetailsPage,
       componentProps: {
         id: product.id,
-        cartItemId: product.cartItemId,
         title: product.title,
         image: product.image,
         shop: product.shop,
         price: product.price,
         quantidade: product.quantidade,
-        description: product.description
-      }
+        description: product.description,
+      },
     });
     modal.present();
   }

@@ -9,7 +9,7 @@ import { CartService } from 'src/app/services/cart.service';
 @Component({
   selector: 'app-category',
   templateUrl: './category.page.html',
-  styleUrls: ['./category.page.scss']
+  styleUrls: ['./category.page.scss'],
 })
 export class CategoryPage implements OnInit {
   public category: string;
@@ -47,11 +47,11 @@ export class CategoryPage implements OnInit {
       .toPromise();
 
     const productOfCategory = allProducts.filter(
-      p => p.category === this.category
+      (p) => p.category === this.category
     );
 
     const addCartProps = (p: any) => {
-      const [props] = this.cartList.filter(c => c[p.id]);
+      const [props] = this.cartList.filter((c) => c[p.id]);
       if (props) {
         return { ...p, quantidade: props[p.id], cartItemId: props.id };
       } else {
@@ -64,17 +64,14 @@ export class CategoryPage implements OnInit {
   }
 
   async loadCart(): Promise<any> {
-    const cartList = await this.cartService
-      .getCart()
-      .pipe(first())
-      .toPromise();
+    const cartList = await this.cartService.getCart().pipe(first()).toPromise();
 
     return cartList;
   }
 
   async presentLoading() {
     this.loader = await this.loadingController.create({
-      cssClass: 'my-custom-class'
+      cssClass: 'my-custom-class',
     });
     await this.loader.present();
   }
@@ -90,20 +87,19 @@ export class CategoryPage implements OnInit {
   }
 
   async presentModalDetails(idProduto: string) {
-    const [product] = this.productList.filter(p => p.id === idProduto);
+    const [product] = this.productList.filter((p) => p.id === idProduto);
 
     const modal = await this.modalController.create({
       component: DetailsPage,
       componentProps: {
         id: product.id,
-        cartItemId: product.cartItemId,
         title: product.title,
         image: product.image,
         shop: product.shop,
         price: product.price,
         quantidade: product.quantidade,
-        description: product.description
-      }
+        description: product.description,
+      },
     });
     modal.present();
   }
