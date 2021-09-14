@@ -3,31 +3,33 @@ import {
   ElementRef,
   Input,
   OnDestroy,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
 import {
   ModalController,
   ToastController,
-  LoadingController
+  LoadingController,
 } from '@ionic/angular';
 import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { CartService } from 'src/app/services/cart.service';
 
 @Component({
   selector: 'app-details',
   templateUrl: './details.page.html',
-  styleUrls: ['./details.page.scss']
+  styleUrls: ['./details.page.scss'],
 })
 export class DetailsPage implements OnDestroy {
   @ViewChild('input', { static: true }) input: ElementRef;
   @Input() id: any;
-  @Input() cartItemId: any;
+  // @Input() cartItemId: any;
   @Input() title: any;
   @Input() image: any;
   @Input() shop: any;
   @Input() price: any;
   @Input() quantidade: any;
   @Input() description: any;
+  public cartItemId: any;
   private cartSubscription: Subscription;
   private cart = [];
   private loading: any;
@@ -42,9 +44,16 @@ export class DetailsPage implements OnDestroy {
   }
 
   async getCart() {
-    this.cartSubscription = this.cartService.getCart().subscribe(data => {
-      this.cart = data;
-    });
+    this.cartItemId = 0;
+    this.cartSubscription = this.cartService
+      .getCart()
+      .pipe(take(1))
+      .subscribe((data) => {
+        this.cart = data;
+
+        const [idCart] = data.filter((c) => c[this.id]);
+        this.cartItemId = idCart ? idCart.id : 0;
+      });
   }
 
   ngOnDestroy() {
@@ -54,7 +63,7 @@ export class DetailsPage implements OnDestroy {
   }
 
   async addToCart() {
-    const isDuplicateId = this.cart.some(item => item[this.id]);
+    const isDuplicateId = this.cart.some((item) => item[this.id]);
     const quantidade = this.input.nativeElement.value;
     await this.presentLoading();
     try {
@@ -78,11 +87,11 @@ export class DetailsPage implements OnDestroy {
   presentToast(message: string) {
     this.toastController
       .create({ message, duration: 1000, position: 'top', color: 'dark' })
-      .then(toast => toast.present());
+      .then((toast) => toast.present());
   }
 
   presentLoading() {
-    this.loadingController.create().then(res => {
+    this.loadingController.create().then((res) => {
       res.present();
     });
   }
@@ -90,10 +99,10 @@ export class DetailsPage implements OnDestroy {
   dismissLoader() {
     this.loadingController
       .dismiss()
-      .then(response => {
+      .then((response) => {
         console.log('Loader closed!', response);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log('Error occured : ', err);
       });
   }
