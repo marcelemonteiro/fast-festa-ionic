@@ -33,6 +33,13 @@ const routes: Routes = [
       import('./login/login.module').then((m) => m.LoginPageModule),
     canActivate: [LoggedGuard],
   },
+
+  {
+    path: 'register',
+    loadChildren: () =>
+      import('./register/register.module').then((m) => m.RegisterPageModule),
+    canActivate: [LoggedGuard],
+  },
 ];
 
 @NgModule({

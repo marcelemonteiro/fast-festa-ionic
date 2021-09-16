@@ -10,6 +10,9 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Product } from 'src/app/interfaces/product';
 import { DetailsPage } from '../details/details.page';
+import { UserService } from '../services/user.service';
+import { User } from '../interfaces/user';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-cart',
@@ -22,11 +25,13 @@ export class CartPage implements OnDestroy {
   public isLoading: boolean;
   public cart = [];
   public loader: any;
+  public user: User = {};
   private cartSubscription: Subscription;
   private productsSubscription: Subscription;
 
   constructor(
     private productService: ProductService,
+    private userService: UserService,
     private cartService: CartService,
     private toastCtrl: ToastController,
     private router: Router,
@@ -35,6 +40,31 @@ export class CartPage implements OnDestroy {
   ) {
     this.loadCart();
     this.isLoading = true;
+  }
+
+  ngOnInit() {
+    this.userService
+      .getCurrentUser()
+      .pipe(take(1))
+      .subscribe((res) => {
+        [this.user] = res;
+        console.log(this.user);
+      });
+  }
+
+  getUserInfo() {
+    this.userService
+      .getUsers()
+      .pipe(take(1))
+      .subscribe((res) => {
+        const filtered = res.filter((u) => {
+          if (u.email === this.user.email) {
+            return u;
+          }
+        });
+        [this.user] = filtered;
+        console.log(this.user);
+      });
   }
 
   ngOnDestroy() {
@@ -48,6 +78,7 @@ export class CartPage implements OnDestroy {
       .getCart()
       .subscribe((data) => {
         this.cart = data;
+        console.log(this.cart);
         this.loadProducts();
         this.dismissLoader();
       });
@@ -59,12 +90,18 @@ export class CartPage implements OnDestroy {
       .subscribe((allProducts) => {
         const addCartProps = (p: Product) => {
           const [props] = this.cart.filter((c) => c[p.id]);
-          return { ...p, quantidade: props[p.id], cartItemId: props.id };
+          return {
+            ...p,
+            quantidade: props[p.id],
+            cartItemId: props.id,
+            usuario: props.usuario,
+          };
         };
 
         this.products = allProducts
           .filter((p) => this.isProductInCart(p.id))
           .map(addCartProps);
+        console.log(this.products);
 
         this.getTotalPrice();
       });
@@ -126,6 +163,7 @@ export class CartPage implements OnDestroy {
       component: DetailsPage,
       componentProps: {
         id: product.id,
+        usuario: product.usuario,
         title: product.title,
         image: product.image,
         shop: product.shop,

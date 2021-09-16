@@ -1,8 +1,10 @@
+import { User } from './../interfaces/user';
 import {
   Component,
   ElementRef,
   Input,
   OnDestroy,
+  OnInit,
   ViewChild,
 } from '@angular/core';
 import {
@@ -13,13 +15,14 @@ import {
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { CartService } from 'src/app/services/cart.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-details',
   templateUrl: './details.page.html',
   styleUrls: ['./details.page.scss'],
 })
-export class DetailsPage implements OnDestroy {
+export class DetailsPage implements OnDestroy, OnInit {
   @ViewChild('input', { static: true }) input: ElementRef;
   @Input() id: any;
   // @Input() cartItemId: any;
@@ -29,17 +32,24 @@ export class DetailsPage implements OnDestroy {
   @Input() price: any;
   @Input() quantidade: any;
   @Input() description: any;
+  @Input() usuario: any;
   public cartItemId: any;
+  public user: User = {};
   private cartSubscription: Subscription;
   private cart = [];
   private loading: any;
 
   constructor(
     private cartService: CartService,
+    private userService: UserService,
     private toastController: ToastController,
     private modalController: ModalController,
     private loadingController: LoadingController
   ) {
+    console.log(this.usuario);
+  }
+
+  ngOnInit() {
     this.getCart();
   }
 
@@ -49,8 +59,7 @@ export class DetailsPage implements OnDestroy {
       .getCart()
       .pipe(take(1))
       .subscribe((data) => {
-        this.cart = data;
-
+        this.cart = data.filter((c) => c['usuario'] == this.user.id);
         const [idCart] = data.filter((c) => c[this.id]);
         this.cartItemId = idCart ? idCart.id : 0;
       });
@@ -73,7 +82,11 @@ export class DetailsPage implements OnDestroy {
         this.modalController.dismiss();
         this.dismissLoader();
       } else {
-        await this.cartService.addProductToCart(this.id, quantidade);
+        await this.cartService.addProductToCart(
+          this.id,
+          quantidade,
+          this.usuario
+        );
         this.presentToast('Produto adicionado ao carrinho');
         this.modalController.dismiss();
         this.dismissLoader();
@@ -81,6 +94,7 @@ export class DetailsPage implements OnDestroy {
     } catch (error) {
       this.presentToast('Não foi possível adicionar ao carrinho');
       this.dismissLoader();
+      this.modalController.dismiss();
     }
   }
 

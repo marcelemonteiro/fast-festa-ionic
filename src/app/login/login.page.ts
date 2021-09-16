@@ -8,6 +8,7 @@ import {
 import { User } from '../interfaces/user';
 import { RegisterPage } from '../register/register.page';
 import { AuthService } from '../services/auth.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -21,6 +22,7 @@ export class LoginPage implements OnInit {
     private loadingController: LoadingController,
     private toastController: ToastController,
     private authService: AuthService,
+    private userService: UserService,
     private router: Router
   ) {}
 
@@ -30,6 +32,7 @@ export class LoginPage implements OnInit {
     await this.presentLoading();
     try {
       await this.authService.login(this.userLogin);
+      await this.userService.addCurrentUser(this.userLogin);
       this.router.navigateByUrl('tabs/home');
       this.dismissLoader();
     } catch (error) {

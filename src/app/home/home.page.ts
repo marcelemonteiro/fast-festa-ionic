@@ -11,6 +11,7 @@ import { CartService } from 'src/app/services/cart.service';
 import { ProductService } from 'src/app/services/product.service';
 import { CategoryPage } from '../category/category.page';
 import { DetailsPage } from '../details/details.page';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -35,7 +36,8 @@ export class HomePage implements OnInit {
     public loadingController: LoadingController,
     private toastController: ToastController,
     private navController: NavController,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private authService: AuthService
   ) {
     this.showTabs = true;
   }

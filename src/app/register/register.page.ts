@@ -5,8 +5,9 @@ import {
   ModalController,
   ToastController,
 } from '@ionic/angular';
-import { User } from '../interfaces/user';
+import { User } from './../interfaces/user';
 import { AuthService } from '../services/auth.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-register',
@@ -15,27 +16,31 @@ import { AuthService } from '../services/auth.service';
 })
 export class RegisterPage implements OnInit {
   userRegister: User = {};
-  private loading: any;
-
   constructor(
     private modalController: ModalController,
     private loadingController: LoadingController,
     private toastCtrl: ToastController,
     private authService: AuthService,
+    private userService: UserService,
     private router: Router
   ) {}
 
   ngOnInit() {}
 
   async register() {
+    console.log(this.userRegister);
+
     await this.presentLoading();
     try {
       await this.authService.register(this.userRegister);
+      await this.userService.addUser(this.userRegister);
+      await this.userService.addCurrentUser(this.userRegister);
       this.presentToast('Usuário cadastrado com sucesso', 'success');
       this.dismissLoader();
       this.modalController.dismiss();
     } catch (error) {
       this.presentToast(error.message, 'danger');
+      console.log(error);
       this.dismissLoader();
     }
   }

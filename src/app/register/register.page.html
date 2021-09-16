@@ -14,7 +14,43 @@
     <ion-item color="light" class="ion-margin" lines="none">
       <ion-input
         type="text"
-        placeholder="Usuário"
+        placeholder="Nome"
+        [(ngModel)]="userRegister.nome"
+        clearInput
+      ></ion-input>
+    </ion-item>
+
+    <ion-item color="light" class="ion-margin" lines="none">
+      <ion-input
+        type="text"
+        placeholder="CEP"
+        [(ngModel)]="userRegister.cep"
+        clearInput
+      ></ion-input>
+    </ion-item>
+
+    <ion-item color="light" class="ion-margin" lines="none">
+      <ion-input
+        type="text"
+        placeholder="Telefone"
+        [(ngModel)]="userRegister.telefone"
+        clearInput
+      ></ion-input>
+    </ion-item>
+
+    <ion-item color="light" class="ion-margin" lines="none">
+      <ion-input
+        type="text"
+        placeholder="CPF"
+        [(ngModel)]="userRegister.cpf"
+        clearInput
+      ></ion-input>
+    </ion-item>
+
+    <ion-item color="light" class="ion-margin" lines="none">
+      <ion-input
+        type="text"
+        placeholder="E-mail"
         [(ngModel)]="userRegister.email"
         clearInput
       ></ion-input>

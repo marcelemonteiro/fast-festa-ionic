@@ -1,4 +1,13 @@
 export interface User {
-    email?: string,
-    password?: string
+  id?: string;
+  email?: string;
+  password?: string;
+  nome?: string;
+  cep?: string;
+  // logradouro?: string;
+  // complemento?: string;
+  // bairro?: string;
+  // cidade?: string;
+  telefone?: string;
+  cpf?: string;
 }

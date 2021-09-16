@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import {
   AngularFirestore,
-  AngularFirestoreCollection
+  AngularFirestoreCollection,
 } from '@angular/fire/firestore';
 import { map } from 'rxjs/operators';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CartService {
   private cartCollection: AngularFirestoreCollection;
@@ -19,8 +19,8 @@ export class CartService {
 
   getCart() {
     return this.cartCollection.snapshotChanges().pipe(
-      map(actions => {
-        return actions.map(a => {
+      map((actions) => {
+        return actions.map((a) => {
           const data = a.payload.doc.data();
           const id = a.payload.doc.id;
           return { id, ...data };
@@ -29,15 +29,16 @@ export class CartService {
     );
   }
 
-  addProductToCart(idProduto: string, quantidade: number) {
+  addProductToCart(idProduto: string, quantidade: number, idUsuario: string) {
     return this.cartCollection.add({
-      [idProduto]: quantidade
+      [idProduto]: quantidade,
+      usuario: idUsuario,
     });
   }
 
   updateCart(idCart: string, idProduto: string, quantidade: number) {
     return this.cartCollection.doc(idCart).update({
-      [idProduto]: quantidade
+      [idProduto]: quantidade,
     });
   }
 

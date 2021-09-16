@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import {
+  AngularFirestore,
+  AngularFirestoreCollection,
+} from '@angular/fire/firestore';
 import { map } from 'rxjs/operators';
 import { Product } from '../interfaces/product';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProductService {
   private productsCollection: AngularFirestoreCollection<Product>;
@@ -17,8 +20,8 @@ export class ProductService {
 
   getProducts() {
     return this.productsCollection.snapshotChanges().pipe(
-      map(actions => {
-        return actions.map(a => {
+      map((actions) => {
+        return actions.map((a) => {
           const data = a.payload.doc.data();
           const id = a.payload.doc.id;
 
@@ -34,9 +37,6 @@ export class ProductService {
 
   getProduct(id) {
     return this.productsCollection.doc<Product>(id).valueChanges();
-
-    // return this.productsCollection.doc(id).snapshotChanges();
-    
   }
 
   updateProduct(id: string, product: Product) {
@@ -49,8 +49,8 @@ export class ProductService {
 
   getCategories() {
     return this.categoriesCollection.snapshotChanges().pipe(
-      map(actions => {
-        return actions.map(a => {
+      map((actions) => {
+        return actions.map((a) => {
           const data = a.payload.doc.data();
 
           return { ...data };
