@@ -45,16 +45,7 @@ export class UserService implements OnInit {
   }
 
   getCurrentUser() {
-    return this.userCollection.snapshotChanges().pipe(
-      map((actions) => {
-        return actions.map((a) => {
-          const data = a.payload.doc.data();
-          const id = a.payload.doc.id;
-
-          return { id, ...data };
-        });
-      })
-    );
+    return this.userCollection.valueChanges({ idField: 'id' });
   }
 
   removeUserFromSession(id: string) {

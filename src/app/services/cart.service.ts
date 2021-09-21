@@ -18,15 +18,7 @@ export class CartService {
   }
 
   getCart() {
-    return this.cartCollection.snapshotChanges().pipe(
-      map((actions) => {
-        return actions.map((a) => {
-          const data = a.payload.doc.data();
-          const id = a.payload.doc.id;
-          return { id, ...data };
-        });
-      })
-    );
+    return this.cartCollection.valueChanges({ idField: 'id' });
   }
 
   addProductToCart(idProduto: string, quantidade: number, idUsuario: string) {
@@ -36,10 +28,19 @@ export class CartService {
     });
   }
 
-  updateCart(idCart: string, idProduto: string, quantidade: number) {
-    return this.cartCollection.doc(idCart).update({
-      [idProduto]: quantidade,
-    });
+  updateCart(
+    idProduto: string,
+    idCart: string,
+    idUsuario: string,
+    quantidade: number
+  ) {
+    return this.afs
+      .collection('Cart')
+      .doc(idCart)
+      .update({
+        [idProduto]: quantidade,
+        usuario: idUsuario,
+      });
   }
 
   deleteProductFromCart(idCart: string) {

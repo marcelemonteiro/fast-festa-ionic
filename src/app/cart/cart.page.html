@@ -1,11 +1,11 @@
 <ion-content>
   <div
-    *ngIf="!isLoading && cart.length === 0"
+    *ngIf="!isLoading && cartList.length === 0"
     class="flex ion-text-center ion-padding-top"
   >
     <ion-text color="medium">Carrinho vazio</ion-text>
   </div>
-  <ion-item *ngFor="let product of products" class="ion-no-padding">
+  <ion-item *ngFor="let product of productList" class="ion-no-padding">
     <ion-grid (click)="presentModal(product.id)">
       <ion-row
         class="ion-margin-top ion-justify-content-center ion-align-items-start"
@@ -43,7 +43,7 @@
     </ion-grid>
   </ion-item>
 
-  <ion-footer *ngIf="products.length !== 0">
+  <ion-footer *ngIf="cartList">
     <ion-item lines="none">
       <ion-label> Total </ion-label>
       <ion-text slot="end" color="primary">

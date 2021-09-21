@@ -24,8 +24,8 @@ import { UserService } from '../services/user.service';
 })
 export class DetailsPage implements OnDestroy, OnInit {
   @ViewChild('input', { static: true }) input: ElementRef;
-  @Input() id: any;
-  // @Input() cartItemId: any;
+  @Input() idProduto: any;
+  @Input() cartItemId: any;
   @Input() title: any;
   @Input() image: any;
   @Input() shop: any;
@@ -33,8 +33,6 @@ export class DetailsPage implements OnDestroy, OnInit {
   @Input() quantidade: any;
   @Input() description: any;
   @Input() usuario: any;
-  public cartItemId: any;
-  public user: User = {};
   private cartSubscription: Subscription;
   private cart = [];
   private loading: any;
@@ -45,23 +43,20 @@ export class DetailsPage implements OnDestroy, OnInit {
     private toastController: ToastController,
     private modalController: ModalController,
     private loadingController: LoadingController
-  ) {
-    console.log(this.usuario);
-  }
+  ) {}
 
   ngOnInit() {
     this.getCart();
+    console.log('USUÁRIO', this.usuario);
+    console.log('ID CARRINHO', this.cartItemId);
   }
 
   async getCart() {
-    this.cartItemId = 0;
     this.cartSubscription = this.cartService
       .getCart()
       .pipe(take(1))
       .subscribe((data) => {
-        this.cart = data.filter((c) => c['usuario'] == this.user.id);
-        const [idCart] = data.filter((c) => c[this.id]);
-        this.cartItemId = idCart ? idCart.id : 0;
+        this.cart = data.filter((c) => c['usuario'] == this.usuario);
       });
   }
 
@@ -72,18 +67,23 @@ export class DetailsPage implements OnDestroy, OnInit {
   }
 
   async addToCart() {
-    const isDuplicateId = this.cart.some((item) => item[this.id]);
+    const isDuplicateId = this.cart.some((item) => item[this.idProduto]);
     const quantidade = this.input.nativeElement.value;
-    await this.presentLoading();
+    this.presentLoading();
     try {
       if (isDuplicateId) {
-        await this.cartService.updateCart(this.cartItemId, this.id, quantidade);
+        await this.cartService.updateCart(
+          this.idProduto,
+          this.cartItemId,
+          this.usuario,
+          quantidade
+        );
         this.presentToast('Produto atualizado adicionado ao carrinho');
         this.modalController.dismiss();
         this.dismissLoader();
       } else {
         await this.cartService.addProductToCart(
-          this.id,
+          this.idProduto,
           quantidade,
           this.usuario
         );
@@ -93,9 +93,10 @@ export class DetailsPage implements OnDestroy, OnInit {
       }
     } catch (error) {
       this.presentToast('Não foi possível adicionar ao carrinho');
-      this.dismissLoader();
+      console.log(error);
       this.modalController.dismiss();
     }
+    this.dismissLoader();
   }
 
   presentToast(message: string) {

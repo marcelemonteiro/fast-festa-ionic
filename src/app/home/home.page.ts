@@ -6,12 +6,17 @@ import {
   ToastController,
 } from '@ionic/angular';
 import { first } from 'rxjs/operators';
-import { Product } from 'src/app/interfaces/product';
-import { CartService } from 'src/app/services/cart.service';
+// Services
+import { AuthService } from '../services/auth.service';
+import { UserService } from '../services/user.service';
 import { ProductService } from 'src/app/services/product.service';
+import { CartService } from 'src/app/services/cart.service';
+// Pages
 import { CategoryPage } from '../category/category.page';
 import { DetailsPage } from '../details/details.page';
-import { AuthService } from '../services/auth.service';
+// Interfaces
+import { Product } from 'src/app/interfaces/product';
+import { User } from './../interfaces/user';
 
 @Component({
   selector: 'app-home',
@@ -23,6 +28,7 @@ export class HomePage implements OnInit {
   public productList: any[];
   public categoryList: any[];
   public showTabs: boolean;
+  public user: User;
 
   public slideOpts = {
     slidesPerView: 1.2,
@@ -37,7 +43,8 @@ export class HomePage implements OnInit {
     private toastController: ToastController,
     private navController: NavController,
     private modalCtrl: ModalController,
-    private authService: AuthService
+    private authService: AuthService,
+    private userService: UserService
   ) {
     this.showTabs = true;
   }
@@ -46,6 +53,8 @@ export class HomePage implements OnInit {
     this.cartList = await this.loadCart();
     this.productList = await this.loadProducts();
     this.categoryList = await this.loadCategories();
+    [this.user] = await this.getUser();
+    console.log('USER', this.user);
   }
 
   async loadProducts(): Promise<any> {
@@ -57,7 +66,12 @@ export class HomePage implements OnInit {
     const addCartProps = (p: Product) => {
       const [props] = this.cartList.filter((c) => c[p.id]);
       if (props) {
-        return { ...p, quantidade: props[p.id], cartItemId: props.id };
+        return {
+          ...p,
+          quantidade: props[p.id],
+          cartItemId: props.id,
+          usuario: props.usuario,
+        };
       } else {
         return { ...p, quantidade: 1, cartItemId: 0 };
       }
@@ -84,6 +98,24 @@ export class HomePage implements OnInit {
     return categoryListFiltered;
   }
 
+  async getUser(): Promise<any> {
+    const allUsers = await this.userService
+      .getUsers()
+      .pipe(first())
+      .toPromise();
+
+    const [currentUser] = await this.userService
+      .getCurrentUser()
+      .pipe(first())
+      .toPromise();
+
+    const currentUserInfo = allUsers.filter(
+      (user) => user.email === currentUser.email
+    );
+
+    return currentUserInfo;
+  }
+
   async deleteProduct(id: string) {
     try {
       await this.productService.deleteProduct(id);
@@ -94,12 +126,13 @@ export class HomePage implements OnInit {
 
   async presentModalDetails(idProduto: string) {
     const [product] = this.productList.filter((p) => p.id === idProduto);
-
     const modal = await this.modalCtrl.create({
       component: DetailsPage,
       cssClass: 'my-custom-class',
       componentProps: {
-        id: product.id,
+        idProduto: product.id,
+        cartItemId: product.cartItemId,
+        usuario: this.user.id,
         title: product.title,
         image: product.image,
         shop: product.shop,

@@ -1,33 +1,35 @@
 import { Component, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   ModalController,
   ToastController,
   LoadingController,
 } from '@ionic/angular';
+import { Subscription } from 'rxjs';
+import { first, take } from 'rxjs/operators';
+// Services
 import { ProductService } from 'src/app/services/product.service';
 import { CartService } from 'src/app/services/cart.service';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { Product } from 'src/app/interfaces/product';
-import { DetailsPage } from '../details/details.page';
 import { UserService } from '../services/user.service';
+// Interfaces
+import { Product } from 'src/app/interfaces/product';
 import { User } from '../interfaces/user';
-import { take } from 'rxjs/operators';
+// Pages
+import { DetailsPage } from '../details/details.page';
 
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.page.html',
   styleUrls: ['./cart.page.scss'],
 })
-export class CartPage implements OnDestroy {
-  public products = [];
+export class CartPage {
+  public productList: any[];
+  public cartList: any[];
+  public user: User;
   public totalPrice: number;
   public isLoading: boolean;
-  public cart = [];
+  public isCartEmpty: boolean;
   public loader: any;
-  public user: User = {};
-  private cartSubscription: Subscription;
-  private productsSubscription: Subscription;
 
   constructor(
     private productService: ProductService,
@@ -38,86 +40,82 @@ export class CartPage implements OnDestroy {
     private modalCtrl: ModalController,
     private loadingController: LoadingController
   ) {
-    this.loadCart();
     this.isLoading = true;
   }
 
-  ngOnInit() {
-    this.userService
-      .getCurrentUser()
-      .pipe(take(1))
-      .subscribe((res) => {
-        [this.user] = res;
-        console.log(this.user);
-      });
+  async ngOnInit() {
+    // Recebe o usuário logado
+    [this.user] = await this.getUser();
+    console.log('USUARIO LOGADO', this.user);
+
+    // Carrega o carrinho
+    this.cartList = await this.loadCart();
+    console.log('CARRINHO', this.cartList);
+
+    // Carrega os itens do carrinho
+    this.productList = await this.loadProducts();
+    console.log('PRODUTOS', this.productList);
+
+    // Calcula o valor total da compra
+    this.getTotalPrice();
   }
 
-  getUserInfo() {
-    this.userService
+  async getUser(): Promise<any> {
+    const allUsers = await this.userService
       .getUsers()
-      .pipe(take(1))
-      .subscribe((res) => {
-        const filtered = res.filter((u) => {
-          if (u.email === this.user.email) {
-            return u;
-          }
-        });
-        [this.user] = filtered;
-        console.log(this.user);
-      });
+      .pipe(first())
+      .toPromise();
+
+    const [currentUser] = await this.userService
+      .getCurrentUser()
+      .pipe(first())
+      .toPromise();
+
+    const currentUserInfo = allUsers.filter(
+      (user) => user.email === currentUser.email
+    );
+
+    return currentUserInfo;
   }
 
-  ngOnDestroy() {
-    this.cartSubscription.unsubscribe();
-    this.productsSubscription.unsubscribe();
+  async loadCart(): Promise<any> {
+    const cartList = await this.cartService.getCart().pipe(first()).toPromise();
+    const cartListOfCurrentUser = cartList.filter(
+      (cart) => cart.usuario === this.user.id
+    );
+
+    return cartListOfCurrentUser;
   }
 
-  async loadCart() {
-    await this.presentLoading();
-    this.cartSubscription = await this.cartService
-      .getCart()
-      .subscribe((data) => {
-        this.cart = data;
-        console.log(this.cart);
-        this.loadProducts();
-        this.dismissLoader();
-      });
-  }
-
-  loadProducts() {
-    this.productsSubscription = this.productService
+  async loadProducts(): Promise<any> {
+    const allProducts = await this.productService
       .getProducts()
-      .subscribe((allProducts) => {
-        const addCartProps = (p: Product) => {
-          const [props] = this.cart.filter((c) => c[p.id]);
-          return {
-            ...p,
-            quantidade: props[p.id],
-            cartItemId: props.id,
-            usuario: props.usuario,
-          };
-        };
+      .pipe(first())
+      .toPromise();
 
-        this.products = allProducts
-          .filter((p) => this.isProductInCart(p.id))
-          .map(addCartProps);
-        console.log(this.products);
+    const addCartProps = (p: Product) => {
+      const [props] = this.cartList.filter((c) => c[p.id]);
+      return {
+        ...p,
+        quantidade: props[p.id],
+        cartItemId: props.id,
+      };
+    };
 
-        this.getTotalPrice();
-      });
+    const productsInCart = allProducts
+      .filter((p) => this.isProductInCart(p.id))
+      .map(addCartProps);
 
-    if (this.cart.length === 0) {
-      this.isLoading = false;
-    }
+    return productsInCart;
   }
 
   isProductInCart(idProduto: string) {
-    const filter = this.cart.some((c) => c[idProduto]);
+    const filter = this.cartList.some((c) => c[idProduto]);
     return filter;
   }
 
   getTotalPrice() {
-    const prices = this.products.map((p) => p.price * p.quantidade);
+    const prices = this.productList.map((p) => p.price * p.quantidade);
     const total = prices.reduce((previuos, current) => previuos + current, 0);
     this.totalPrice = total;
   }
@@ -157,12 +155,12 @@ export class CartPage implements OnDestroy {
   }
 
   async presentModal(idProduto: string) {
-    const [product] = this.products.filter((p) => p.id === idProduto);
-
+    const [product] = this.productList.filter((p) => p.id === idProduto);
     const modal = await this.modalCtrl.create({
       component: DetailsPage,
       componentProps: {
-        id: product.id,
+        idProduto: product.id,
+        cartItemId: product.cartItemId,
         usuario: product.usuario,
         title: product.title,
         image: product.image,
