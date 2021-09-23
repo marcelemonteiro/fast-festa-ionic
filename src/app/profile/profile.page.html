@@ -1,30 +1,88 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>profile</ion-title>
+    <ion-buttons slot='end'>
+      <ion-button color="danger" fill="clear" slot="end" (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Profile</ion-title>
+
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  {{user.nome}} {{user.email}} {{user.cpf}}
-  <ion-button (click)="logout()">Logout</ion-button>
-  <!-- <form #form="ngForm" (ngSubmit)="logForm(form)" novalidate>
-    <ion-item>
-      <ion-label>Todo</ion-label>
-      <ion-input
-        type="text"
-        required
-        [(ngModel)]="todo.title"
-        ngControl="title"
-      ></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label>Description</ion-label>
-      <ion-textarea
-        [(ngModel)]="todo.description"
-        ngControl="description"
-      ></ion-textarea>
-    </ion-item>
-    <button ion-button type="submit" block>Add Todo</button>
-  </form>
-   -->
+  <!-- E-mail do Usuário -->
+  <!-- <ion-item lines="none">
+    {{user.nome}} {{user.email}} {{user.cpf}}
+  </ion-item> -->
+
+  <ion-card>
+    <form>
+
+    
+
+      <ion-item>
+        <ion-label position="floating">Nome</ion-label>
+        <ion-input type="text" name="textname"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">CPF</ion-label>
+        <ion-input type="text" name="cpf" placeholder="000.000.000-00"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">CEP</ion-label>
+        <ion-input type="text" name="cep" placeholder="00000-000"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Endereço</ion-label>
+        <ion-input type="text" name="endereco" placeholder="Rua"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">numero</ion-label>
+        <ion-input type="number" name="numero"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Telefone</ion-label>
+        <ion-input type="text" name="telefone" placeholder="(xx) xxxxx-xxxx"></ion-input>
+      </ion-item>
+
+      <ion-list>
+        <ion-radio-group value="m">
+          <ion-list-header>
+            <ion-label style="font-size: 15px; text-align: left;">Genero</ion-label>
+          </ion-list-header>
+
+          <ion-item>
+            <ion-radio slot="start" name="genero" value="m"> </ion-radio>
+            <ion-label>Masculino</ion-label>
+          </ion-item>
+
+          <ion-item>
+            <ion-radio slot="start" type="radio" name="genero" id="feminino" value="f"></ion-radio>
+            <ion-label>Feminino</ion-label>
+          </ion-item>
+
+        </ion-radio-group>
+      </ion-list>
+
+      <ion-item lines="none">
+        <ion-label>Data de nascimento</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-datetime displayFormat=" DD MMM YYYY" value="2021-09-23T15:43:40.394Z" display-timezone="utc">
+        </ion-datetime>
+
+      </ion-item>
+
+      <ion-button expand="block" type="submit">Save</ion-button>
+      <ion-button expand="block" class="btn btn-secondary mt-4 ml-2">Cancelar</ion-button>
+
+    </form>
+  </ion-card>
+
 </ion-content>
