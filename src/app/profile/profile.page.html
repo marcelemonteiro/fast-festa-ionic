@@ -5,50 +5,69 @@
         <ion-icon name="log-out-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Profile</ion-title>
+    <ion-title>Perfil</ion-title>
 
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <!-- E-mail do Usuário -->
-  <!-- <ion-item lines="none">
+  <!-- E-mail do Usuário
+  <ion-item lines="none">
     {{user.nome}} {{user.email}} {{user.cpf}}
   </ion-item> -->
 
   <ion-card>
     <form>
 
-    
+
 
       <ion-item>
         <ion-label position="floating">Nome</ion-label>
-        <ion-input type="text" name="textname"></ion-input>
+        <ion-input type="text" name="textname" clearInput></ion-input>
       </ion-item>
 
       <ion-item>
         <ion-label position="floating">CPF</ion-label>
-        <ion-input type="text" name="cpf" placeholder="000.000.000-00"></ion-input>
+        <ion-input type="text" name="cpf" placeholder="000.000.000-00" clearInput></ion-input>
       </ion-item>
 
       <ion-item>
         <ion-label position="floating">CEP</ion-label>
-        <ion-input type="text" name="cep" placeholder="00000-000"></ion-input>
+        <ion-input type="text" name="cep" placeholder="00000-000" clearInput></ion-input>
       </ion-item>
 
       <ion-item>
         <ion-label position="floating">Endereço</ion-label>
-        <ion-input type="text" name="endereco" placeholder="Rua"></ion-input>
+        <ion-input type="text" name="endereco" placeholder="Av/Rua" clearInput></ion-input>
       </ion-item>
 
       <ion-item>
-        <ion-label position="floating">numero</ion-label>
-        <ion-input type="number" name="numero"></ion-input>
+        <ion-label position="floating">Número</ion-label>
+        <ion-input type="number" name="numero" clearInput></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Complemento</ion-label>
+        <ion-input type="text" name="complemento" placeholder ="Apartamento/Casa/Lote" clearInput></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Bairro</ion-label>
+        <ion-input type="text" name="complemento" clearInput></ion-input>
       </ion-item>
 
       <ion-item>
         <ion-label position="floating">Telefone</ion-label>
-        <ion-input type="text" name="telefone" placeholder="(xx) xxxxx-xxxx"></ion-input>
+        <ion-input type="tel" name="telefone" placeholder="(xx) xxxxx-xxxx" clearInput></ion-input>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-label>Data de nascimento</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-datetime displayFormat=" DD MMM YYYY" value="2021-09-23T21:03:40.394Z" display-timezone="gmt">
+        </ion-datetime>
+
       </ion-item>
 
       <ion-list>
@@ -69,15 +88,6 @@
 
         </ion-radio-group>
       </ion-list>
-
-      <ion-item lines="none">
-        <ion-label>Data de nascimento</ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-datetime displayFormat=" DD MMM YYYY" value="2021-09-23T15:43:40.394Z" display-timezone="utc">
-        </ion-datetime>
-
-      </ion-item>
 
       <ion-button expand="block" type="submit">Save</ion-button>
       <ion-button expand="block" class="btn btn-secondary mt-4 ml-2">Cancelar</ion-button>
