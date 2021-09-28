@@ -14,14 +14,14 @@ import { UserService } from '../services/user.service';
 export class ProfilePage implements OnInit {
   user: User = {};
   private userId: string;
-
+  
   constructor(
     private authService: AuthService,
     private userService: UserService,
     private router: Router,
     private toastCtrl: ToastController,
     private loadingController: LoadingController
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.userService

@@ -28,7 +28,8 @@
 
       <ion-item>
         <ion-label position="floating">CPF</ion-label>
-        <ion-input type="text" name="cpf" placeholder="000.000.000-00" clearInput></ion-input>
+        <ion-input type="text" name="cpf" placeholder="000.000.000-00"   specialCharacters="-,."
+          clearInput></ion-input>
       </ion-item>
 
       <ion-item>
@@ -43,12 +44,12 @@
 
       <ion-item>
         <ion-label position="floating">Número</ion-label>
-        <ion-input type="number" name="numero" clearInput></ion-input>
+        <ion-input type="number" name="numero" ngModel="phoneNumber" ui-br-phone-mask="simple" clearInput></ion-input>
       </ion-item>
 
       <ion-item>
         <ion-label position="floating">Complemento</ion-label>
-        <ion-input type="text" name="complemento" placeholder ="Apartamento/Casa/Lote" clearInput></ion-input>
+        <ion-input type="text" name="complemento" placeholder="Apartamento/Casa/Lote" clearInput></ion-input>
       </ion-item>
 
       <ion-item>
