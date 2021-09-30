@@ -40,6 +40,11 @@ export class UserService implements OnInit {
     });
   }
 
+  // Atualiza os dados do usuário
+  updateUser(user: User) {
+    return this.usersCollection.doc(user.id).update(user);
+  }
+
   getUsers() {
     return this.usersCollection.valueChanges({ idField: 'id' });
   }

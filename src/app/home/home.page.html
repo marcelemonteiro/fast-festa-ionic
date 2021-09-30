@@ -1,5 +1,9 @@
 <ion-header translucent> </ion-header>
 <ion-content fullscreen>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <ion-slides [options]="slideOpts" class="main-slides">
     <ion-slide class="main-slides__slide">
       <img

@@ -6,8 +6,8 @@ import { CartPage } from './cart.page';
 const routes: Routes = [
   {
     path: '',
-    component: CartPage
-  }
+    component: CartPage,
+  },
 ];
 
 @NgModule({

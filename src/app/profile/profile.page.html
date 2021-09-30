@@ -1,30 +1,183 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>profile</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="danger" fill="clear" slot="end" (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Perfil</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  {{user.nome}} {{user.email}} {{user.cpf}}
-  <ion-button (click)="logout()">Logout</ion-button>
-  <!-- <form #form="ngForm" (ngSubmit)="logForm(form)" novalidate>
-    <ion-item>
-      <ion-label>Todo</ion-label>
-      <ion-input
-        type="text"
-        required
-        [(ngModel)]="todo.title"
-        ngControl="title"
-      ></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label>Description</ion-label>
-      <ion-textarea
-        [(ngModel)]="todo.description"
-        ngControl="description"
-      ></ion-textarea>
-    </ion-item>
-    <button ion-button type="submit" block>Add Todo</button>
-  </form>
-   -->
+  <ion-text class="flex-center ion-margin-top">
+    Bem-vind{{user.genero == 'F' ? 'a' : 'o'}} {{user.nome}}
+  </ion-text>
+  <ion-card>
+    <form>
+      <ion-item>
+        <ion-label position="floating">Nome</ion-label>
+        <ion-input
+          type="text"
+          name="textname"
+          [value]="user.nome"
+          [(ngModel)]="user.nome"
+          clearInput
+          [disabled]="edit ? false : true"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">CPF</ion-label>
+        <ion-input
+          type="text"
+          name="cpf"
+          placeholder="000.000.000-00"
+          [value]="user.cpf"
+          [(ngModel)]="user.cpf"
+          clearInput
+          [disabled]="edit ? false : true"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">CEP</ion-label>
+        <ion-input
+          type="text"
+          name="cep"
+          placeholder="00000-000"
+          [value]="user.cep"
+          [(ngModel)]="user.cep"
+          clearInput
+          [disabled]="edit ? false : true"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Logradouro</ion-label>
+        <ion-input
+          type="text"
+          name="logradouro"
+          placeholder="Av/Rua"
+          [value]="user.logradouro"
+          [(ngModel)]="user.logradouro"
+          clearInput
+          [disabled]="edit ? false : true"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Complemento</ion-label>
+        <ion-input
+          type="text"
+          name="complemento"
+          placeholder="Apartamento/Casa/Lote"
+          [value]="user.complemento"
+          [(ngModel)]="user.complemento"
+          clearInput
+          [disabled]="edit ? false : true"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Bairro</ion-label>
+        <ion-input
+          type="text"
+          name="bairro"
+          [value]="user.bairro"
+          [(ngModel)]="user.bairro"
+          clearInput
+          [disabled]="edit ? false : true"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Telefone</ion-label>
+        <ion-input
+          type="tel"
+          name="telefone"
+          placeholder="(xx) xxxxx-xxxx"
+          [value]="user.telefone"
+          [(ngModel)]="user.telefone"
+          clearInput
+          [disabled]="edit ? false : true"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-label color="medium">Data de nascimento</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-datetime
+          name="nascimento"
+          displayFormat=" DD MMM YYYY"
+          value="2021-09-23T21:03:40.394Z"
+          [value]="user.nascimento"
+          [(ngModel)]="user.nascimento"
+          [disabled]="edit ? false : true"
+        >
+        </ion-datetime>
+      </ion-item>
+
+      <ion-list>
+        <ion-radio-group [value]="user.genero">
+          <ion-list-header>
+            <ion-label color="medium" style="font-size: 15px; text-align: left">
+              Genero
+            </ion-label>
+          </ion-list-header>
+
+          <ion-item>
+            <ion-radio
+              slot="start"
+              name="genero"
+              value="M"
+              [disabled]="edit ? false : true"
+              (click)="changeUserGender('M')"
+            >
+            </ion-radio>
+            <ion-label>Masculino</ion-label>
+          </ion-item>
+
+          <ion-item>
+            <ion-radio
+              slot="start"
+              name="genero"
+              value="F"
+              [disabled]="edit ? false : true"
+              (click)="changeUserGender('F')"
+            ></ion-radio>
+            <ion-label>Feminino</ion-label>
+          </ion-item>
+        </ion-radio-group>
+      </ion-list>
+
+      <ion-button
+        *ngIf="edit"
+        expand="block"
+        type="submit"
+        color="success"
+        (click)="updateUser(user)"
+      >
+        Save
+      </ion-button>
+      <ion-button
+        *ngIf="edit"
+        expand="block"
+        class="btn btn-secondary mt-4 ml-2"
+        (click)="cancelEditing()"
+      >
+        Cancelar
+      </ion-button>
+      <ion-button
+        *ngIf="!edit"
+        (click)="isEditing()"
+        expand="block"
+        type="submit"
+        color="success"
+      >
+        Editar Perfil
+      </ion-button>
+    </form>
+  </ion-card>
 </ion-content>

@@ -4,10 +4,12 @@ export interface User {
   password?: string;
   nome?: string;
   cep?: string;
-  // logradouro?: string;
-  // complemento?: string;
-  // bairro?: string;
-  // cidade?: string;
+  logradouro?: string;
+  numero?: string;
+  complemento?: string;
+  bairro?: string;
   telefone?: string;
   cpf?: string;
+  nascimento?: string;
+  genero?: string;
 }

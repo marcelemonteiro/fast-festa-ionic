@@ -50,13 +50,29 @@ export class HomePage implements OnInit {
   }
 
   async ngOnInit() {
+    this.loadAll();
+  }
+
+  // Carrega todos os dados da página
+  async loadAll() {
     this.cartList = await this.loadCart();
     this.productList = await this.loadProducts();
     this.categoryList = await this.loadCategories();
     [this.user] = await this.getUser();
-    console.log('USER', this.user);
   }
 
+  // Atualiza todos os dados da página
+  async doRefresh(event) {
+    console.log('Begin async operation');
+
+    setTimeout(async () => {
+      this.loadAll();
+      console.log('Async operation has ended');
+      event.target.complete();
+    }, 2000);
+  }
+
+  // Carrega todos os produtos
   async loadProducts(): Promise<any> {
     const allProducts = await this.productService
       .getProducts()
@@ -81,12 +97,14 @@ export class HomePage implements OnInit {
     return productList;
   }
 
+  // Carrega o carrinho
   async loadCart(): Promise<any> {
     const cartList = await this.cartService.getCart().pipe(first()).toPromise();
 
     return cartList;
   }
 
+  // Filtra e carrega as categorias
   async loadCategories(): Promise<any> {
     const allProducts = this.productList;
     const categoryList = allProducts.map((p) => p.category);
@@ -98,6 +116,7 @@ export class HomePage implements OnInit {
     return categoryListFiltered;
   }
 
+  // Recebe o usuário logado e seus dados
   async getUser(): Promise<any> {
     const allUsers = await this.userService
       .getUsers()
@@ -116,6 +135,7 @@ export class HomePage implements OnInit {
     return currentUserInfo;
   }
 
+  // Deleta um produto
   async deleteProduct(id: string) {
     try {
       await this.productService.deleteProduct(id);
@@ -124,6 +144,7 @@ export class HomePage implements OnInit {
     }
   }
 
+  // Cria modal para a página do produto
   async presentModalDetails(idProduto: string) {
     const [product] = this.productList.filter((p) => p.id === idProduto);
     const modal = await this.modalCtrl.create({
@@ -144,13 +165,10 @@ export class HomePage implements OnInit {
     modal.present();
   }
 
+  // Mostra o Toast
   presentToast(message: string) {
     this.toastController
       .create({ message, duration: 2000, position: 'top' })
       .then((toast) => toast.present());
-  }
-
-  navigateForward(id: string) {
-    this.navController.navigateForward(`/details/${id}`);
   }
 }

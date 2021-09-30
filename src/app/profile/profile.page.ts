@@ -1,8 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { User } from './../interfaces/user';
+import { Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoadingController, ToastController } from '@ionic/angular';
+import {
+  IonContent,
+  IonInput,
+  LoadingController,
+  ToastController,
+} from '@ionic/angular';
 import { filter, take } from 'rxjs/operators';
-import { User } from '../interfaces/user';
 import { AuthService } from '../services/auth.service';
 import { UserService } from '../services/user.service';
 
@@ -12,7 +17,9 @@ import { UserService } from '../services/user.service';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
+  @ViewChild(IonContent) content: IonContent;
   user: User = {};
+  edit: boolean;
   private userId: string;
 
   constructor(
@@ -21,7 +28,9 @@ export class ProfilePage implements OnInit {
     private router: Router,
     private toastCtrl: ToastController,
     private loadingController: LoadingController
-  ) {}
+  ) {
+    this.edit = false;
+  }
 
   ngOnInit() {
     this.userService
@@ -50,6 +59,20 @@ export class ProfilePage implements OnInit {
         [this.user] = filtered;
         console.log(this.user);
       });
+  }
+
+  async updateUser(user: User) {
+    await this.presentLoading();
+
+    try {
+      await this.userService.updateUser(user);
+      this.dismissLoader();
+      this.cancelEditing();
+    } catch (error) {
+      console.log(error);
+      this.presentToast(error.message, 'danger');
+      this.dismissLoader();
+    }
   }
 
   async logout() {
@@ -88,5 +111,24 @@ export class ProfilePage implements OnInit {
       color,
     });
     return toast.present();
+  }
+
+  isEditing() {
+    this.edit = true;
+    this.scrollToTop();
+  }
+
+  cancelEditing() {
+    this.edit = false;
+    this.scrollToTop();
+  }
+
+  scrollToTop() {
+    this.content.scrollToTop();
+  }
+
+  changeUserGender(gender) {
+    this.user.genero = gender;
+    console.log(this.user.genero);
   }
 }

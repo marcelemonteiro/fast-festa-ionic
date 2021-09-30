@@ -6,7 +6,6 @@ import {
   LoadingController,
 } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { first, take } from 'rxjs/operators';
 // Services
 import { ProductService } from 'src/app/services/product.service';
 import { CartService } from 'src/app/services/cart.service';
@@ -16,6 +15,7 @@ import { Product } from 'src/app/interfaces/product';
 import { User } from '../interfaces/user';
 // Pages
 import { DetailsPage } from '../details/details.page';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-cart',
@@ -23,13 +23,14 @@ import { DetailsPage } from '../details/details.page';
   styleUrls: ['./cart.page.scss'],
 })
 export class CartPage {
-  public productList: any[];
-  public cartList: any[];
-  public user: User;
-  public totalPrice: number;
-  public isLoading: boolean;
-  public isCartEmpty: boolean;
-  public loader: any;
+  productList: any[];
+  cartList: any[];
+  user: User;
+  totalPrice: number;
+  isLoading: boolean;
+  loader: any;
+  cartSubscription: Subscription;
+  productsSubscription: Subscription;
 
   constructor(
     private productService: ProductService,
@@ -43,77 +44,78 @@ export class CartPage {
     this.isLoading = true;
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     // Recebe o usuário logado
-    [this.user] = await this.getUser();
-    console.log('USUARIO LOGADO', this.user);
+    this.getUser();
 
     // Carrega o carrinho
-    this.cartList = await this.loadCart();
-    console.log('CARRINHO', this.cartList);
-
-    // Carrega os itens do carrinho
-    this.productList = await this.loadProducts();
-    console.log('PRODUTOS', this.productList);
-
-    // Calcula o valor total da compra
-    this.getTotalPrice();
+    this.loadCart();
   }
 
-  async getUser(): Promise<any> {
-    const allUsers = await this.userService
-      .getUsers()
-      .pipe(first())
-      .toPromise();
+  ngOnDestroy() {
+    this.cartSubscription.unsubscribe();
+    this.productsSubscription.unsubscribe();
+  }
 
-    const [currentUser] = await this.userService
+  getUser() {
+    this.userService
       .getCurrentUser()
-      .pipe(first())
-      .toPromise();
+      .pipe(take(1))
+      .subscribe((res) => {
+        [this.user] = res;
+      });
 
-    const currentUserInfo = allUsers.filter(
-      (user) => user.email === currentUser.email
-    );
-
-    return currentUserInfo;
+    this.userService
+      .getUsers()
+      .pipe(take(1))
+      .subscribe((res) => {
+        const allUsers = res;
+        const currentUserInfo = allUsers.filter(
+          (user) => user.email == this.user.email
+        );
+        [this.user] = currentUserInfo;
+        console.log('user', this.user);
+      });
   }
 
-  async loadCart(): Promise<any> {
-    const cartList = await this.cartService.getCart().pipe(first()).toPromise();
-    const cartListOfCurrentUser = cartList.filter(
-      (cart) => cart.usuario === this.user.id
-    );
-
-    return cartListOfCurrentUser;
+  loadCart() {
+    this.presentLoading();
+    this.cartSubscription = this.cartService.getCart().subscribe((res) => {
+      this.cartList = res.filter((cart) => cart.usuario === this.user.id);
+      this.loadProducts();
+      this.dismissLoader();
+    });
   }
 
-  async loadProducts(): Promise<any> {
-    const allProducts = await this.productService
+  // Carrega os produtos que estão dentro do carrinho
+  loadProducts() {
+    this.productsSubscription = this.productService
       .getProducts()
-      .pipe(first())
-      .toPromise();
+      .subscribe((allProducts) => {
+        const addCartProps = (p: Product) => {
+          const [props] = this.cartList.filter((c) => c[p.id]);
+          return { ...p, quantidade: props[p.id], cartItemId: props.id };
+        };
 
-    const addCartProps = (p: Product) => {
-      const [props] = this.cartList.filter((c) => c[p.id]);
-      return {
-        ...p,
-        quantidade: props[p.id],
-        cartItemId: props.id,
-      };
-    };
+        this.productList = allProducts
+          .filter((p) => this.isProductInCart(p.id))
+          .map(addCartProps);
 
-    const productsInCart = allProducts
-      .filter((p) => this.isProductInCart(p.id))
-      .map(addCartProps);
+        this.getTotalPrice();
+      });
 
-    return productsInCart;
+    if (this.cartList.length === 0) {
+      this.isLoading = false;
+    }
   }
 
+  // Verifica se o produto está no carrinho
   isProductInCart(idProduto: string) {
     const filter = this.cartList.some((c) => c[idProduto]);
     return filter;
   }
 
+  // Calcula o preço total da compra
   getTotalPrice() {
     const prices = this.productList.map((p) => p.price * p.quantidade);
     const total = prices.reduce((previuos, current) => previuos + current, 0);
@@ -161,7 +163,7 @@ export class CartPage {
       componentProps: {
         idProduto: product.id,
         cartItemId: product.cartItemId,
-        usuario: product.usuario,
+        usuario: this.user.id,
         title: product.title,
         image: product.image,
         shop: product.shop,
@@ -173,7 +175,12 @@ export class CartPage {
     modal.present();
   }
 
-  goToDetails(idProduto: string) {
-    this.router.navigateByUrl(`/details/${idProduto}`);
+  doRefresh(event) {
+    console.log('Begin async operation');
+
+    setTimeout(() => {
+      console.log('Async operation has ended');
+      event.target.complete();
+    }, 2000);
   }
 }
