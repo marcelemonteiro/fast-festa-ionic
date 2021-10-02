@@ -11,32 +11,21 @@ import { Product } from '../interfaces/product';
 })
 export class ProductService {
   private productsCollection: AngularFirestoreCollection<Product>;
-  private categoriesCollection: AngularFirestoreCollection;
 
   constructor(private afs: AngularFirestore) {
     this.productsCollection = this.afs.collection<Product>('Products');
-    this.categoriesCollection = this.afs.collection('Categories');
   }
 
   getProducts() {
-    return this.productsCollection.snapshotChanges().pipe(
-      map((actions) => {
-        return actions.map((a) => {
-          const data = a.payload.doc.data();
-          const id = a.payload.doc.id;
+    return this.productsCollection.valueChanges({ idField: 'id' });
+  }
 
-          return { id, ...data };
-        });
-      })
-    );
+  getProduct(id: string) {
+    return this.productsCollection.doc<Product>(id).valueChanges();
   }
 
   addProduct(product: Product) {
     return this.productsCollection.add(product);
-  }
-
-  getProduct(id) {
-    return this.productsCollection.doc<Product>(id).valueChanges();
   }
 
   updateProduct(id: string, product: Product) {
@@ -45,17 +34,5 @@ export class ProductService {
 
   deleteProduct(id: string) {
     return this.productsCollection.doc(id).delete();
-  }
-
-  getCategories() {
-    return this.categoriesCollection.snapshotChanges().pipe(
-      map((actions) => {
-        return actions.map((a) => {
-          const data = a.payload.doc.data();
-
-          return { ...data };
-        });
-      })
-    );
   }
 }

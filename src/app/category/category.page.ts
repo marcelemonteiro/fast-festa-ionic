@@ -1,21 +1,23 @@
 import { first } from 'rxjs/operators';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LoadingController, ModalController } from '@ionic/angular';
 import { ProductService } from 'src/app/services/product.service';
 import { DetailsPage } from '../details/details.page';
 import { CartService } from 'src/app/services/cart.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-category',
   templateUrl: './category.page.html',
   styleUrls: ['./category.page.scss'],
 })
-export class CategoryPage implements OnInit {
-  public category: string;
-  public cartList: any[];
-  public productList: any[];
-  public loader: any;
+export class CategoryPage implements OnInit, OnDestroy {
+  category: string;
+  cartList: any[];
+  productList: any[];
+  private cartSubscription: Subscription;
+  private productSubscription: Subscription;
 
   constructor(
     private modalController: ModalController,
@@ -24,15 +26,14 @@ export class CategoryPage implements OnInit {
     private cartService: CartService,
     private loadingController: LoadingController
   ) {
-    this.category = activatedRoute.snapshot.paramMap.get('category');
+    this.category = this.activatedRoute.snapshot.paramMap.get('category');
   }
 
   async ngOnInit() {
     await this.presentLoading();
 
     try {
-      this.cartList = await this.loadCart();
-      this.productList = await this.loadProducts();
+      this.loadCart();
       this.dismissLoader();
     } catch (error) {
       console.log(error);
@@ -40,40 +41,43 @@ export class CategoryPage implements OnInit {
     }
   }
 
-  async loadProducts(): Promise<any> {
-    const allProducts = await this.productService
-      .getProducts()
-      .pipe(first())
-      .toPromise();
-
-    const productOfCategory = allProducts.filter(
-      (p) => p.category === this.category
-    );
-
-    const addCartProps = (p: any) => {
-      const [props] = this.cartList.filter((c) => c[p.id]);
-      if (props) {
-        return { ...p, quantidade: props[p.id], cartItemId: props.id };
-      } else {
-        return { ...p, quantidade: 1, cartItemId: 0 };
-      }
-    };
-
-    const productList = productOfCategory.map(addCartProps);
-    return productList;
+  ngOnDestroy() {
+    this.cartSubscription.unsubscribe();
+    this.productSubscription.unsubscribe();
   }
 
-  async loadCart(): Promise<any> {
-    const cartList = await this.cartService.getCart().pipe(first()).toPromise();
+  loadCart() {
+    this.cartSubscription = this.cartService.getCart().subscribe((res) => {
+      this.cartList = res;
+    });
+    this.loadProducts();
+  }
 
-    return cartList;
+  loadProducts() {
+    this.productSubscription = this.productService
+      .getProducts()
+      .subscribe((res) => {
+        const productOfCategory = (product) =>
+          product.category === this.category;
+
+        const addCartProps = (p: any) => {
+          const [props] = this.cartList.filter((c) => c[p.id]);
+          if (props) {
+            return { ...p, quantidade: props[p.id], cartItemId: props.id };
+          } else {
+            return { ...p, quantidade: 1, cartItemId: 0 };
+          }
+        };
+
+        this.productList = res.filter(productOfCategory).map(addCartProps);
+      });
   }
 
   async presentLoading() {
-    this.loader = await this.loadingController.create({
+    const loader = await this.loadingController.create({
       cssClass: 'my-custom-class',
     });
-    await this.loader.present();
+    await loader.present();
   }
 
   async dismissLoader() {

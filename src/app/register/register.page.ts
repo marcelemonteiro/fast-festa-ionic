@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import {
   LoadingController,
   ModalController,
@@ -21,8 +20,7 @@ export class RegisterPage implements OnInit {
     private loadingController: LoadingController,
     private toastCtrl: ToastController,
     private authService: AuthService,
-    private userService: UserService,
-    private router: Router
+    private userService: UserService
   ) {}
 
   ngOnInit() {}
@@ -34,7 +32,6 @@ export class RegisterPage implements OnInit {
     try {
       await this.authService.register(this.userRegister);
       await this.userService.addUser(this.userRegister);
-      // await this.userService.addCurrentUser(this.userRegister);
       this.presentToast('Usuário cadastrado com sucesso', 'success');
       this.dismissLoader();
       this.modalController.dismiss();
@@ -71,5 +68,10 @@ export class RegisterPage implements OnInit {
 
   dismissModal() {
     this.modalController.dismiss();
+  }
+
+  changeUserGender(gender) {
+    this.userRegister.genero = gender;
+    console.log(this.userRegister.genero);
   }
 }

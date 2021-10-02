@@ -36,7 +36,7 @@
               color="dark"
               fill="clear"
               size="small"
-              (click)="deleteProduct(product.cartItemId, $event)"
+              (click)="removeProduct(product.cartItemId, $event)"
             >
               <ion-icon slot="icon-only" name="trash" size="small"></ion-icon>
             </ion-button>
@@ -47,7 +47,7 @@
   </ion-item>
 </ion-content>
 <ion-footer>
-  <ion-toolbar color='light'>
+  <ion-toolbar color="light">
     <ion-item lines="none">
       <ion-label> Total </ion-label>
       <ion-text slot="end" color="primary">

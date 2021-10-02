@@ -1,10 +1,15 @@
 .main-slides {
   margin-top: 0.8rem;
   padding-left: 0.8rem;
-  
+
   &__slide {
+    max-height: 8rem;
     border-radius: 1rem;
     overflow: hidden;
+
+    img {
+      object-fit: cover;
+    }
   }
 }
 

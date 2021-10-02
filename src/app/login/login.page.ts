@@ -6,9 +6,9 @@ import {
   ToastController,
 } from '@ionic/angular';
 import { User } from '../interfaces/user';
+import { PasswordResetPage } from '../password-reset/password-reset.page';
 import { RegisterPage } from '../register/register.page';
 import { AuthService } from '../services/auth.service';
-import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +22,6 @@ export class LoginPage implements OnInit {
     private loadingController: LoadingController,
     private toastController: ToastController,
     private authService: AuthService,
-    private userService: UserService,
     private router: Router
   ) {}
 
@@ -32,7 +31,6 @@ export class LoginPage implements OnInit {
     await this.presentLoading();
     try {
       await this.authService.login(this.userLogin);
-      // await this.userService.addCurrentUser(this.userLogin);
       this.router.navigateByUrl('tabs/home');
       this.dismissLoader();
     } catch (error) {
@@ -41,7 +39,6 @@ export class LoginPage implements OnInit {
       this.dismissLoader();
     }
   }
-
   async presentRegister() {
     const modal = await this.modalController.create({
       component: RegisterPage,
@@ -76,6 +73,13 @@ export class LoginPage implements OnInit {
   async presentModalRegister() {
     const modal = await this.modalController.create({
       component: RegisterPage,
+    });
+    modal.present();
+  }
+
+  async presentModalPasswordReset() {
+    const modal = await this.modalController.create({
+      component: PasswordResetPage,
     });
     modal.present();
   }

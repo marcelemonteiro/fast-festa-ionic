@@ -7,9 +7,7 @@ import { User } from '../interfaces/user';
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private auth: AngularFireAuth) {
-  }
-
+  constructor(private auth: AngularFireAuth) {}
 
   login(user: User) {
     return this.auth.signInWithEmailAndPassword(user.email, user.password);
@@ -25,5 +23,9 @@ export class AuthService {
 
   getAuth() {
     return this.auth;
+  }
+
+  passwordReset(email: string) {
+    return this.auth.sendPasswordResetEmail(email);
   }
 }

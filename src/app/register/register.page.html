@@ -10,67 +10,158 @@
 </ion-header>
 
 <ion-content mode="md">
-  <ion-list>
-    <ion-item color="light" class="ion-margin" lines="none">
+  <form>
+    <ion-item>
+      <ion-label position="floating">E-mail</ion-label>
       <ion-input
         type="text"
-        placeholder="Nome"
-        [(ngModel)]="userRegister.nome"
-        clearInput
-      ></ion-input>
-    </ion-item>
-
-    <ion-item color="light" class="ion-margin" lines="none">
-      <ion-input
-        type="text"
-        placeholder="CEP"
-        [(ngModel)]="userRegister.cep"
-        clearInput
-      ></ion-input>
-    </ion-item>
-
-    <ion-item color="light" class="ion-margin" lines="none">
-      <ion-input
-        type="text"
-        placeholder="Telefone"
-        [(ngModel)]="userRegister.telefone"
-        clearInput
-      ></ion-input>
-    </ion-item>
-
-    <ion-item color="light" class="ion-margin" lines="none">
-      <ion-input
-        type="text"
-        placeholder="CPF"
-        [(ngModel)]="userRegister.cpf"
-        clearInput
-      ></ion-input>
-    </ion-item>
-
-    <ion-item color="light" class="ion-margin" lines="none">
-      <ion-input
-        type="text"
-        placeholder="E-mail"
+        name="textname"
+        [value]="userRegister.email"
         [(ngModel)]="userRegister.email"
         clearInput
       ></ion-input>
     </ion-item>
 
-    <ion-item color="light" class="ion-margin" lines="none">
+    <ion-item>
+      <ion-label position="floating">Senha</ion-label>
       <ion-input
         type="password"
-        placeholder="Senha"
+        name="textname"
+        [value]="userRegister.password"
         [(ngModel)]="userRegister.password"
         clearInput
       ></ion-input>
     </ion-item>
-  </ion-list>
-  <ion-button
-    class="ion-margin-start ion-margin-end"
-    color="primary"
-    expand="block"
-    (click)="register()"
-  >
-    Cadastrar
-  </ion-button>
+    <ion-item>
+      <ion-label position="floating">Nome</ion-label>
+      <ion-input
+        type="text"
+        name="textname"
+        [value]="userRegister.nome"
+        [(ngModel)]="userRegister.nome"
+        clearInput
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">CPF</ion-label>
+      <ion-input
+        type="text"
+        name="cpf"
+        placeholder="000.000.000-00"
+        [value]="userRegister.cpf"
+        [(ngModel)]="userRegister.cpf"
+        clearInput
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">CEP</ion-label>
+      <ion-input
+        type="text"
+        name="cep"
+        placeholder="00000-000"
+        [value]="userRegister.cep"
+        [(ngModel)]="userRegister.cep"
+        clearInput
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Logradouro</ion-label>
+      <ion-input
+        type="text"
+        name="logradouro"
+        placeholder="Av/Rua Número"
+        [value]="userRegister.logradouro"
+        [(ngModel)]="userRegister.logradouro"
+        clearInput
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Complemento</ion-label>
+      <ion-input
+        type="text"
+        name="complemento"
+        placeholder="Apartamento/Casa/Lote"
+        [value]="userRegister.complemento"
+        [(ngModel)]="userRegister.complemento"
+        clearInput
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Bairro</ion-label>
+      <ion-input
+        type="text"
+        name="bairro"
+        [value]="userRegister.bairro"
+        [(ngModel)]="userRegister.bairro"
+        clearInput
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Telefone</ion-label>
+      <ion-input
+        type="tel"
+        name="telefone"
+        placeholder="(xx) xxxxx-xxxx"
+        [value]="userRegister.telefone"
+        [(ngModel)]="userRegister.telefone"
+        clearInput
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-datetime
+        name="nascimento"
+        displayFormat=" DD MMM YYYY"
+        placeholder="Data de nascimento"
+        [value]="userRegister.nascimento"
+        [(ngModel)]="userRegister.nascimento"
+      >
+      </ion-datetime>
+    </ion-item>
+
+    <ion-list>
+      <ion-radio-group [value]="userRegister.genero">
+        <ion-list-header>
+          <ion-label color="medium" style="font-size: 15px; text-align: left">
+            Genero
+          </ion-label>
+        </ion-list-header>
+
+        <ion-item>
+          <ion-radio
+            slot="start"
+            name="genero"
+            value="M"
+            (click)="changeUserGender('M')"
+          >
+          </ion-radio>
+          <ion-label>Masculino</ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-radio
+            slot="start"
+            name="genero"
+            value="F"
+            (click)="changeUserGender('F')"
+          ></ion-radio>
+          <ion-label>Feminino</ion-label>
+        </ion-item>
+      </ion-radio-group>
+    </ion-list>
+    <ion-button
+      class="ion-margin"
+      color="primary"
+      expand="block"
+      (click)="register()"
+    >
+      Cadastrar
+    </ion-button>
+  </form>
 </ion-content>

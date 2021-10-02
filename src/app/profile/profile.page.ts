@@ -29,6 +29,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   isEditing: boolean;
   private userId: string;
   private currentUserUid: string;
+  private currentUserEmail: string;
   private userUidSubscription: Subscription;
   private userInfoSubscription: Subscription;
 
@@ -44,6 +45,7 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.getCurrentUserUid();
+    this.getCurrentUserEmail();
     this.getUserInfo();
   }
 
@@ -64,11 +66,21 @@ export class ProfilePage implements OnInit, OnDestroy {
       });
   }
 
-  //
+  getCurrentUserEmail() {
+    this.userUidSubscription = this.authService
+      .getAuth()
+      .authState.subscribe((res) => {
+        if (res) {
+          this.currentUserEmail = res.email;
+          console.log('usuario logado ->', this.currentUserEmail);
+        }
+      });
+  }
+
   getUserInfo() {
     this.userInfoSubscription = this.userService.getUsers().subscribe((res) => {
       const filtered = res.filter((user) => {
-        if (user.uid === this.currentUserUid) {
+        if (user.email === this.currentUserEmail) {
           return user;
         }
       });

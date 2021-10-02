@@ -9,13 +9,10 @@ import { Subscription } from 'rxjs';
 // Services
 import { ProductService } from 'src/app/services/product.service';
 import { CartService } from 'src/app/services/cart.service';
-import { UserService } from '../services/user.service';
 // Interfaces
 import { Product } from 'src/app/interfaces/product';
-import { User } from '../interfaces/user';
 // Pages
 import { DetailsPage } from '../details/details.page';
-import { take } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -24,21 +21,19 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./cart.page.scss'],
 })
 export class CartPage implements OnInit, OnDestroy {
-  productList: any[];
+  productList: Product[];
   cartList: any[];
-  currentUserUid: string;
   totalPrice: number;
   isLoading: boolean;
-  loader: any;
-  cartSubscription: Subscription;
-  productsSubscription: Subscription;
+  private currentUserUid: string;
+  private cartSubscription: Subscription;
+  private productsSubscription: Subscription;
 
   constructor(
     private productService: ProductService,
     private authService: AuthService,
     private cartService: CartService,
     private toastCtrl: ToastController,
-    private router: Router,
     private modalCtrl: ModalController,
     private loadingController: LoadingController
   ) {
@@ -71,14 +66,14 @@ export class CartPage implements OnInit, OnDestroy {
 
     try {
       this.cartSubscription = this.cartService.getCart().subscribe((res) => {
-        this.cartList = res.filter(
-          (cart) => cart.usuario === this.currentUserUid
-        );
+        const filterByUser = (cart: any) =>
+          cart.usuario === this.currentUserUid;
+        this.cartList = res.filter(filterByUser);
         this.dismissLoader();
         this.loadProducts();
       });
     } catch (error) {
-      console.log(error);
+      this.presentToast(error, 'danger');
       this.dismissLoader();
     }
   }
@@ -97,6 +92,7 @@ export class CartPage implements OnInit, OnDestroy {
           .filter((p) => this.isProductInCart(p.id))
           .map(addCartProps);
 
+        // Calcula o preço total da compra
         this.getTotalPrice();
       });
 
@@ -118,28 +114,31 @@ export class CartPage implements OnInit, OnDestroy {
     this.totalPrice = total;
   }
 
-  async deleteProduct(idCart: string, event: Event) {
+  async removeProduct(idCart: string, event: Event) {
     event.stopPropagation();
     try {
+      this.presentToast('Produto removido', 'success');
       await this.cartService.deleteProductFromCart(idCart);
     } catch (error) {
-      this.presentToast('Erro ao tentar deletar');
+      this.presentToast('Erro ao tentar deletar', 'danger');
     }
   }
 
-  async presentToast(message: string) {
+  async presentToast(message: string, color: string) {
     const toast = await this.toastCtrl.create({
       message,
-      duration: 2000,
+      color,
+      position: 'bottom',
+      duration: 100,
     });
     toast.present();
   }
 
   async presentLoading() {
-    this.loader = await this.loadingController.create({
+    const loader = await this.loadingController.create({
       cssClass: 'my-custom-class',
     });
-    await this.loader.present();
+    await loader.present();
   }
 
   async dismissLoader() {

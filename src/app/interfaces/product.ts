@@ -7,4 +7,7 @@ export interface Product {
   description?: string;
   createdAt?: number;
   category?: string;
+  quantidade?: number;
+  cartItemId?: string;
+  usuario?: string;
 }

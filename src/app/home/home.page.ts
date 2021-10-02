@@ -2,21 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import {
   LoadingController,
   ModalController,
-  NavController,
   ToastController,
 } from '@ionic/angular';
 import { first } from 'rxjs/operators';
 // Services
 import { AuthService } from '../services/auth.service';
-import { UserService } from '../services/user.service';
 import { ProductService } from 'src/app/services/product.service';
 import { CartService } from 'src/app/services/cart.service';
 // Pages
-import { CategoryPage } from '../category/category.page';
 import { DetailsPage } from '../details/details.page';
 // Interfaces
 import { Product } from 'src/app/interfaces/product';
-import { User } from './../interfaces/user';
 
 @Component({
   selector: 'app-home',
@@ -26,29 +22,27 @@ import { User } from './../interfaces/user';
 export class HomePage implements OnInit {
   cartList: any[];
   productList: any[];
-  categoryList: any[];
-  showTabs: boolean;
-  currentUserUid: string;
-
-  public slideOpts = {
+  categoryList: string[];
+  slideOpts = {
     slidesPerView: 1.2,
     spaceBetween: 15,
     loop: true,
   };
+  private currentUserUid: string;
 
   constructor(
     private productService: ProductService,
     private cartService: CartService,
-    public loadingController: LoadingController,
+    private loadingController: LoadingController,
     private toastController: ToastController,
     private modalCtrl: ModalController,
     private authService: AuthService
-  ) {
-    this.showTabs = true;
-  }
+  ) {}
 
-  ngOnInit() {
-    this.loadAll();
+  async ngOnInit() {
+    this.getCurrentUserUid();
+
+    this.loadCart();
   }
 
   // Recebe o uid do usuário logado
@@ -61,22 +55,16 @@ export class HomePage implements OnInit {
     });
   }
 
-  // Carrega todos os dados da página
-  async loadAll() {
-    this.getCurrentUserUid();
-    this.loadCart();
-    this.loadProducts();
-  }
-
-  // Atualiza todos os dados da página
-  async doRefresh(event) {
-    console.log('Begin async operation');
-
-    setTimeout(async () => {
-      this.loadAll();
-      console.log('Async operation has ended');
-      event.target.complete();
-    }, 2000);
+  // Carrega o carrinho
+  loadCart() {
+    this.cartService.getCart().subscribe((res) => {
+      this.cartList = res.filter(
+        (cart) => cart.usuario === this.currentUserUid
+      );
+      console.log('cart', this.cartList);
+      this.loadProducts();
+    });
+    console.log('products', this.productList);
   }
 
   // Carrega todos os produtos
@@ -92,24 +80,13 @@ export class HomePage implements OnInit {
             usuario: props.usuario,
           };
         } else {
-          return { ...p, quantidade: 1, cartItemId: 0, usuario: 'none' };
+          return { ...p, quantidade: 1, cartItemId: 0 };
         }
       };
 
       this.productList = allProducts.map(addCartProps);
-      console.log('products', this.productList);
 
       this.loadCategories();
-    });
-  }
-
-  // Carrega o carrinho
-  loadCart() {
-    this.cartService.getCart().subscribe((res) => {
-      this.cartList = res.filter(
-        (cart) => cart.usuario === this.currentUserUid
-      );
-      console.log('cart', this.cartList);
     });
   }
 
@@ -120,15 +97,6 @@ export class HomePage implements OnInit {
     this.categoryList = categoryList.filter(
       (p, index) => categoryList.indexOf(p) === index
     );
-  }
-
-  // Deleta um produto
-  async deleteProduct(id: string) {
-    try {
-      await this.productService.deleteProduct(id);
-    } catch (error) {
-      this.presentToast('Erro ao tentar deletar');
-    }
   }
 
   // Cria modal para a página do produto
@@ -152,9 +120,26 @@ export class HomePage implements OnInit {
   }
 
   // Mostra o Toast
-  presentToast(message: string) {
+  presentToast(message: string, color: string) {
     this.toastController
-      .create({ message, duration: 2000, position: 'top' })
+      .create({ message, color, duration: 500, position: 'top' })
       .then((toast) => toast.present());
+  }
+
+  async presentLoading() {
+    const loader = await this.loadingController.create({
+      cssClass: 'my-custom-class',
+    });
+    await loader.present();
+  }
+
+  async dismissLoader() {
+    let topLoader = await this.loadingController.getTop();
+    while (topLoader) {
+      if (!(await topLoader.dismiss())) {
+        break;
+      }
+      topLoader = await this.loadingController.getTop();
+    }
   }
 }
