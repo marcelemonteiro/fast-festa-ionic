@@ -34,7 +34,7 @@ export class RegisterPage implements OnInit {
     try {
       await this.authService.register(this.userRegister);
       await this.userService.addUser(this.userRegister);
-      await this.userService.addCurrentUser(this.userRegister);
+      // await this.userService.addCurrentUser(this.userRegister);
       this.presentToast('Usuário cadastrado com sucesso', 'success');
       this.dismissLoader();
       this.modalController.dismiss();

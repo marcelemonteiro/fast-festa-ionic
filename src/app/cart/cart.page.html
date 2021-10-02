@@ -3,7 +3,7 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
   <div
-    *ngIf="!isLoading && cartList.length == 0"
+    *ngIf="!isLoading && cartList.length === 0"
     class="flex ion-text-center ion-padding-top"
   >
     <ion-text color="medium">Carrinho vazio</ion-text>
@@ -47,11 +47,13 @@
   </ion-item>
 </ion-content>
 <ion-footer>
-  <ion-item lines="none">
-    <ion-label> Total </ion-label>
-    <ion-text slot="end" color="primary">
-      <strong> {{ totalPrice | currency: 'BRL'}} </strong>
-    </ion-text>
-  </ion-item>
-  <ion-button expand="block" class="ion-margin">Finalizar compra</ion-button>
+  <ion-toolbar color='light'>
+    <ion-item lines="none">
+      <ion-label> Total </ion-label>
+      <ion-text slot="end" color="primary">
+        <strong> {{ totalPrice | currency: 'BRL'}} </strong>
+      </ion-text>
+    </ion-item>
+    <ion-button expand="block" class="ion-margin">Finalizar compra</ion-button>
+  </ion-toolbar>
 </ion-footer>

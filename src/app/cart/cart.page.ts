@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   ModalController,
@@ -16,16 +16,17 @@ import { User } from '../interfaces/user';
 // Pages
 import { DetailsPage } from '../details/details.page';
 import { take } from 'rxjs/operators';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.page.html',
   styleUrls: ['./cart.page.scss'],
 })
-export class CartPage {
+export class CartPage implements OnInit, OnDestroy {
   productList: any[];
   cartList: any[];
-  user: User;
+  currentUserUid: string;
   totalPrice: number;
   isLoading: boolean;
   loader: any;
@@ -34,7 +35,7 @@ export class CartPage {
 
   constructor(
     private productService: ProductService,
-    private userService: UserService,
+    private authService: AuthService,
     private cartService: CartService,
     private toastCtrl: ToastController,
     private router: Router,
@@ -45,8 +46,8 @@ export class CartPage {
   }
 
   ngOnInit() {
-    // Recebe o usuário logado
-    this.getUser();
+    // Recebe o uid do usuário logado
+    this.getCurrentUserUid();
 
     // Carrega o carrinho
     this.loadCart();
@@ -57,34 +58,29 @@ export class CartPage {
     this.productsSubscription.unsubscribe();
   }
 
-  getUser() {
-    this.userService
-      .getCurrentUser()
-      .pipe(take(1))
-      .subscribe((res) => {
-        [this.user] = res;
-      });
-
-    this.userService
-      .getUsers()
-      .pipe(take(1))
-      .subscribe((res) => {
-        const allUsers = res;
-        const currentUserInfo = allUsers.filter(
-          (user) => user.email == this.user.email
-        );
-        [this.user] = currentUserInfo;
-        console.log('user', this.user);
-      });
+  getCurrentUserUid() {
+    this.authService.getAuth().authState.subscribe((res) => {
+      if (res) {
+        this.currentUserUid = res.uid;
+      }
+    });
   }
 
-  loadCart() {
-    this.presentLoading();
-    this.cartSubscription = this.cartService.getCart().subscribe((res) => {
-      this.cartList = res.filter((cart) => cart.usuario === this.user.id);
-      this.loadProducts();
+  async loadCart() {
+    await this.presentLoading();
+
+    try {
+      this.cartSubscription = this.cartService.getCart().subscribe((res) => {
+        this.cartList = res.filter(
+          (cart) => cart.usuario === this.currentUserUid
+        );
+        this.dismissLoader();
+        this.loadProducts();
+      });
+    } catch (error) {
+      console.log(error);
       this.dismissLoader();
-    });
+    }
   }
 
   // Carrega os produtos que estão dentro do carrinho
@@ -163,7 +159,7 @@ export class CartPage {
       componentProps: {
         idProduto: product.id,
         cartItemId: product.cartItemId,
-        usuario: this.user.id,
+        usuario: this.currentUserUid,
         title: product.title,
         image: product.image,
         shop: product.shop,
@@ -175,7 +171,7 @@ export class CartPage {
     modal.present();
   }
 
-  doRefresh(event) {
+  doRefresh(event: any) {
     console.log('Begin async operation');
 
     setTimeout(() => {

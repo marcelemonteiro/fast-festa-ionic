@@ -1,5 +1,11 @@
 import { User } from './../interfaces/user';
-import { Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ViewChildren,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import {
   IonContent,
@@ -10,17 +16,21 @@ import {
 import { filter, take } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 import { UserService } from '../services/user.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
 })
-export class ProfilePage implements OnInit {
+export class ProfilePage implements OnInit, OnDestroy {
   @ViewChild(IonContent) content: IonContent;
   user: User = {};
-  edit: boolean;
+  isEditing: boolean;
   private userId: string;
+  private currentUserUid: string;
+  private userUidSubscription: Subscription;
+  private userInfoSubscription: Subscription;
 
   constructor(
     private authService: AuthService,
@@ -29,43 +39,49 @@ export class ProfilePage implements OnInit {
     private toastCtrl: ToastController,
     private loadingController: LoadingController
   ) {
-    this.edit = false;
+    this.isEditing = false;
   }
 
   ngOnInit() {
-    this.userService
-      .getCurrentUser()
-      .pipe(take(1))
-      .subscribe((res) => {
-        [this.user] = res;
-        if (this.user) {
-          this.userId = this.user.id;
-        }
-      });
-
+    this.getCurrentUserUid();
     this.getUserInfo();
   }
 
-  getUserInfo() {
-    this.userService
-      .getUsers()
-      .pipe(take(1))
-      .subscribe((res) => {
-        const filtered = res.filter((u) => {
-          if (u.email === this.user.email) {
-            return u;
-          }
-        });
-        [this.user] = filtered;
-        console.log(this.user);
+  ngOnDestroy() {
+    this.userUidSubscription.unsubscribe();
+    this.userInfoSubscription.unsubscribe();
+  }
+
+  // Recebe o uid do usuário logado
+  getCurrentUserUid() {
+    this.userUidSubscription = this.authService
+      .getAuth()
+      .authState.subscribe((res) => {
+        if (res) {
+          this.currentUserUid = res.uid;
+          console.log('usuario logado ->', this.currentUserUid);
+        }
       });
   }
 
-  async updateUser(user: User) {
+  //
+  getUserInfo() {
+    this.userInfoSubscription = this.userService.getUsers().subscribe((res) => {
+      const filtered = res.filter((user) => {
+        if (user.uid === this.currentUserUid) {
+          return user;
+        }
+      });
+      [this.user] = filtered;
+      console.log(this.user);
+    });
+  }
+
+  async updateUser() {
     await this.presentLoading();
 
     try {
-      await this.userService.updateUser(user);
+      await this.userService.updateUser(this.user);
       this.dismissLoader();
       this.cancelEditing();
     } catch (error) {
@@ -79,7 +95,6 @@ export class ProfilePage implements OnInit {
     await this.presentLoading();
     try {
       await this.authService.logout();
-      await this.userService.removeUserFromSession(this.userId);
       this.router.navigateByUrl('login');
       this.dismissLoader();
     } catch (error) {
@@ -113,13 +128,13 @@ export class ProfilePage implements OnInit {
     return toast.present();
   }
 
-  isEditing() {
-    this.edit = true;
+  setIsEditing() {
+    this.isEditing = true;
     this.scrollToTop();
   }
 
   cancelEditing() {
-    this.edit = false;
+    this.isEditing = false;
     this.scrollToTop();
   }
 

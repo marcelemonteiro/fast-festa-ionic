@@ -24,11 +24,11 @@ import { User } from './../interfaces/user';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-  public cartList: any[];
-  public productList: any[];
-  public categoryList: any[];
-  public showTabs: boolean;
-  public user: User;
+  cartList: any[];
+  productList: any[];
+  categoryList: any[];
+  showTabs: boolean;
+  currentUserUid: string;
 
   public slideOpts = {
     slidesPerView: 1.2,
@@ -41,24 +41,31 @@ export class HomePage implements OnInit {
     private cartService: CartService,
     public loadingController: LoadingController,
     private toastController: ToastController,
-    private navController: NavController,
     private modalCtrl: ModalController,
-    private authService: AuthService,
-    private userService: UserService
+    private authService: AuthService
   ) {
     this.showTabs = true;
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.loadAll();
+  }
+
+  // Recebe o uid do usuário logado
+  getCurrentUserUid() {
+    this.authService.getAuth().authState.subscribe((res) => {
+      if (res) {
+        this.currentUserUid = res.uid;
+        console.log('usuario logado ->', this.currentUserUid);
+      }
+    });
   }
 
   // Carrega todos os dados da página
   async loadAll() {
-    this.cartList = await this.loadCart();
-    this.productList = await this.loadProducts();
-    this.categoryList = await this.loadCategories();
-    [this.user] = await this.getUser();
+    this.getCurrentUserUid();
+    this.loadCart();
+    this.loadProducts();
   }
 
   // Atualiza todos os dados da página
@@ -73,66 +80,46 @@ export class HomePage implements OnInit {
   }
 
   // Carrega todos os produtos
-  async loadProducts(): Promise<any> {
-    const allProducts = await this.productService
-      .getProducts()
-      .pipe(first())
-      .toPromise();
+  loadProducts() {
+    this.productService.getProducts().subscribe((allProducts) => {
+      const addCartProps = (p: Product) => {
+        const [props] = this.cartList.filter((c) => c[p.id]);
+        if (props) {
+          return {
+            ...p,
+            quantidade: props[p.id],
+            cartItemId: props.id,
+            usuario: props.usuario,
+          };
+        } else {
+          return { ...p, quantidade: 1, cartItemId: 0, usuario: 'none' };
+        }
+      };
 
-    const addCartProps = (p: Product) => {
-      const [props] = this.cartList.filter((c) => c[p.id]);
-      if (props) {
-        return {
-          ...p,
-          quantidade: props[p.id],
-          cartItemId: props.id,
-          usuario: props.usuario,
-        };
-      } else {
-        return { ...p, quantidade: 1, cartItemId: 0 };
-      }
-    };
+      this.productList = allProducts.map(addCartProps);
+      console.log('products', this.productList);
 
-    const productList = allProducts.map(addCartProps);
-    return productList;
+      this.loadCategories();
+    });
   }
 
   // Carrega o carrinho
-  async loadCart(): Promise<any> {
-    const cartList = await this.cartService.getCart().pipe(first()).toPromise();
-
-    return cartList;
+  loadCart() {
+    this.cartService.getCart().subscribe((res) => {
+      this.cartList = res.filter(
+        (cart) => cart.usuario === this.currentUserUid
+      );
+      console.log('cart', this.cartList);
+    });
   }
 
   // Filtra e carrega as categorias
-  async loadCategories(): Promise<any> {
-    const allProducts = this.productList;
-    const categoryList = allProducts.map((p) => p.category);
+  loadCategories() {
+    const categoryList = this.productList.map((p) => p.category);
 
-    const categoryListFiltered = categoryList.filter(
+    this.categoryList = categoryList.filter(
       (p, index) => categoryList.indexOf(p) === index
     );
-
-    return categoryListFiltered;
-  }
-
-  // Recebe o usuário logado e seus dados
-  async getUser(): Promise<any> {
-    const allUsers = await this.userService
-      .getUsers()
-      .pipe(first())
-      .toPromise();
-
-    const [currentUser] = await this.userService
-      .getCurrentUser()
-      .pipe(first())
-      .toPromise();
-
-    const currentUserInfo = allUsers.filter(
-      (user) => user.email === currentUser.email
-    );
-
-    return currentUserInfo;
   }
 
   // Deleta um produto
@@ -149,11 +136,10 @@ export class HomePage implements OnInit {
     const [product] = this.productList.filter((p) => p.id === idProduto);
     const modal = await this.modalCtrl.create({
       component: DetailsPage,
-      cssClass: 'my-custom-class',
       componentProps: {
         idProduto: product.id,
         cartItemId: product.cartItemId,
-        usuario: this.user.id,
+        usuario: this.currentUserUid,
         title: product.title,
         image: product.image,
         shop: product.shop,

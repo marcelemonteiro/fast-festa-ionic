@@ -56,7 +56,7 @@ export class DetailsPage implements OnDestroy, OnInit {
       .getCart()
       .pipe(take(1))
       .subscribe((data) => {
-        this.cart = data.filter((c) => c['usuario'] == this.usuario);
+        this.cart = data.filter((c) => c.usuario === this.usuario);
       });
   }
 

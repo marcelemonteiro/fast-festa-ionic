@@ -88,11 +88,13 @@ export class CategoryPage implements OnInit {
 
   async presentModalDetails(idProduto: string) {
     const [product] = this.productList.filter((p) => p.id === idProduto);
+    console.log(product);
 
     const modal = await this.modalController.create({
       component: DetailsPage,
       componentProps: {
         id: product.id,
+        cartItemId: product.cartItemId,
         title: product.title,
         image: product.image,
         shop: product.shop,

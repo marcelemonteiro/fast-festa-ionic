@@ -11,7 +11,7 @@
 
 <ion-content>
   <ion-text class="flex-center ion-margin-top">
-    Bem-vind{{user.genero == 'F' ? 'a' : 'o'}} {{user.nome}}
+    Bem-vind{{user.genero === 'F' ? 'a' : 'o'}} {{user.nome}}
   </ion-text>
   <ion-card>
     <form>
@@ -23,7 +23,7 @@
           [value]="user.nome"
           [(ngModel)]="user.nome"
           clearInput
-          [disabled]="edit ? false : true"
+          [disabled]="isEditing ? false : true"
         ></ion-input>
       </ion-item>
 
@@ -36,7 +36,7 @@
           [value]="user.cpf"
           [(ngModel)]="user.cpf"
           clearInput
-          [disabled]="edit ? false : true"
+          [disabled]="isEditing ? false : true"
         ></ion-input>
       </ion-item>
 
@@ -49,7 +49,7 @@
           [value]="user.cep"
           [(ngModel)]="user.cep"
           clearInput
-          [disabled]="edit ? false : true"
+          [disabled]="isEditing ? false : true"
         ></ion-input>
       </ion-item>
 
@@ -62,7 +62,7 @@
           [value]="user.logradouro"
           [(ngModel)]="user.logradouro"
           clearInput
-          [disabled]="edit ? false : true"
+          [disabled]="isEditing ? false : true"
         ></ion-input>
       </ion-item>
 
@@ -75,7 +75,7 @@
           [value]="user.complemento"
           [(ngModel)]="user.complemento"
           clearInput
-          [disabled]="edit ? false : true"
+          [disabled]="isEditing ? false : true"
         ></ion-input>
       </ion-item>
 
@@ -87,7 +87,7 @@
           [value]="user.bairro"
           [(ngModel)]="user.bairro"
           clearInput
-          [disabled]="edit ? false : true"
+          [disabled]="isEditing ? false : true"
         ></ion-input>
       </ion-item>
 
@@ -100,7 +100,7 @@
           [value]="user.telefone"
           [(ngModel)]="user.telefone"
           clearInput
-          [disabled]="edit ? false : true"
+          [disabled]="isEditing ? false : true"
         ></ion-input>
       </ion-item>
 
@@ -114,7 +114,7 @@
           value="2021-09-23T21:03:40.394Z"
           [value]="user.nascimento"
           [(ngModel)]="user.nascimento"
-          [disabled]="edit ? false : true"
+          [disabled]="isEditing ? false : true"
         >
         </ion-datetime>
       </ion-item>
@@ -132,7 +132,7 @@
               slot="start"
               name="genero"
               value="M"
-              [disabled]="edit ? false : true"
+              [disabled]="isEditing ? false : true"
               (click)="changeUserGender('M')"
             >
             </ion-radio>
@@ -144,7 +144,7 @@
               slot="start"
               name="genero"
               value="F"
-              [disabled]="edit ? false : true"
+              [disabled]="isEditing ? false : true"
               (click)="changeUserGender('F')"
             ></ion-radio>
             <ion-label>Feminino</ion-label>
@@ -153,16 +153,16 @@
       </ion-list>
 
       <ion-button
-        *ngIf="edit"
+        *ngIf="isEditing"
         expand="block"
         type="submit"
         color="success"
-        (click)="updateUser(user)"
+        (click)="updateUser()"
       >
         Save
       </ion-button>
       <ion-button
-        *ngIf="edit"
+        *ngIf="isEditing"
         expand="block"
         class="btn btn-secondary mt-4 ml-2"
         (click)="cancelEditing()"
@@ -170,8 +170,8 @@
         Cancelar
       </ion-button>
       <ion-button
-        *ngIf="!edit"
-        (click)="isEditing()"
+        *ngIf="!isEditing"
+        (click)="setIsEditing()"
         expand="block"
         type="submit"
         color="success"

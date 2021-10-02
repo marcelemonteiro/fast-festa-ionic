@@ -32,7 +32,7 @@ export class LoginPage implements OnInit {
     await this.presentLoading();
     try {
       await this.authService.login(this.userLogin);
-      await this.userService.addCurrentUser(this.userLogin);
+      // await this.userService.addCurrentUser(this.userLogin);
       this.router.navigateByUrl('tabs/home');
       this.dismissLoader();
     } catch (error) {
