@@ -178,4 +178,21 @@ export class CartPage implements OnInit, OnDestroy {
       event.target.complete();
     }, 2000);
   }
+
+  async checkout() {
+    await this.presentLoading();
+    try {
+      if (this.cartList.length > 0) {
+        this.cartList.forEach((item) => {
+          this.cartService.checkout(item);
+          this.cartService.deleteProductFromCart(item.id);
+        });
+        this.presentToast('Pedido realizado', 'success');
+      }
+      this.dismissLoader();
+    } catch (error) {
+      this.presentToast(error, 'danger');
+      this.dismissLoader();
+    }
+  }
 }

@@ -54,6 +54,8 @@
         <strong> {{ totalPrice | currency: 'BRL'}} </strong>
       </ion-text>
     </ion-item>
-    <ion-button expand="block" class="ion-margin">Finalizar compra</ion-button>
+    <ion-button expand="block" class="ion-margin" (click)="checkout()">
+      Finalizar compra
+    </ion-button>
   </ion-toolbar>
 </ion-footer>

@@ -12,9 +12,11 @@ import 'firebase/firestore';
 })
 export class CartService {
   private cartCollection: AngularFirestoreCollection;
+  private orderCollection: AngularFirestoreCollection;
 
   constructor(private afs: AngularFirestore) {
     this.cartCollection = this.afs.collection('Cart');
+    this.orderCollection = this.afs.collection('Orders');
   }
 
   getCart() {
@@ -34,16 +36,17 @@ export class CartService {
     idUsuario: string,
     quantidade: number
   ) {
-    return this.afs
-      .collection('Cart')
-      .doc(idCart)
-      .update({
-        [idProduto]: quantidade,
-        usuario: idUsuario,
-      });
+    return this.cartCollection.doc(idCart).update({
+      [idProduto]: quantidade,
+      usuario: idUsuario,
+    });
   }
 
   deleteProductFromCart(idCart: string) {
     return this.cartCollection.doc(idCart).delete();
+  }
+
+  checkout(cart: any) {
+    return this.orderCollection.add(cart);
   }
 }
