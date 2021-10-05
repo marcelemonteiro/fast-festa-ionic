@@ -1,0 +1,27 @@
+<ion-header mode="ios">
+  <ion-toolbar>
+    <ion-title>Meus pedidos</ion-title>
+    <ion-buttons>
+      <ion-back-button
+        slot="start"
+        defaultHref="tabs/profile"
+      ></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div *ngIf="!orders" class="flex">
+    <ion-text color="medium">Nenhum pedido realizado</ion-text>
+  </div>
+  <ion-card *ngFor="let order of orders">
+    <ion-card-header>
+      <ion-card-title>{{getProductTitle(order.produto)}}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Quantidade: {{order.quantidade}}</p>
+      <p>Data do pedido: {{order.data}}</p>
+      <p>Loja: {{getShopName(order.produto)}}</p>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

@@ -20,13 +20,14 @@ export class CartService {
   }
 
   getCart() {
-    return this.cartCollection.valueChanges({ idField: 'id' });
+    return this.cartCollection.valueChanges({ idField: 'idCart' });
   }
 
-  addProductToCart(idProduto: string, quantidade: number, idUsuario: string) {
+  addProductToCart(idProduto: string, quantidade: number, usuario: string) {
     return this.cartCollection.add({
-      [idProduto]: quantidade,
-      usuario: idUsuario,
+      produto: idProduto,
+      quantidade,
+      usuario,
     });
   }
 
@@ -47,6 +48,17 @@ export class CartService {
   }
 
   checkout(cart: any) {
-    return this.orderCollection.add(cart);
+    const data = `${new Date().getUTCDate()}/${
+      new Date().getUTCMonth() + 1
+    }/${new Date().getUTCFullYear()}`;
+
+    return this.orderCollection.add({
+      ...cart,
+      data,
+    });
+  }
+
+  getOrders() {
+    return this.orderCollection.valueChanges({ idField: 'idOrder' });
   }
 }

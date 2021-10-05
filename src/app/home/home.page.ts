@@ -23,6 +23,7 @@ export class HomePage implements OnInit {
   cartList: any[];
   productList: any[];
   categoryList: string[];
+  slideImageList: any[];
   slideOpts = {
     slidesPerView: 1.2,
     spaceBetween: 15,
@@ -85,6 +86,12 @@ export class HomePage implements OnInit {
       };
 
       this.productList = allProducts.map(addCartProps);
+
+      this.slideImageList = this.productList.map((product) => {
+        return { image: product.image, id: product.id };
+      });
+
+      console.log(this.slideImageList);
 
       this.loadCategories();
     });

@@ -69,6 +69,7 @@ export class CartPage implements OnInit, OnDestroy {
         const filterByUser = (cart: any) =>
           cart.usuario === this.currentUserUid;
         this.cartList = res.filter(filterByUser);
+        console.log('cart', this.cartList);
         this.dismissLoader();
         this.loadProducts();
       });
@@ -84,13 +85,15 @@ export class CartPage implements OnInit, OnDestroy {
       .getProducts()
       .subscribe((allProducts) => {
         const addCartProps = (p: Product) => {
-          const [props] = this.cartList.filter((c) => c[p.id]);
-          return { ...p, quantidade: props[p.id], cartItemId: props.id };
+          const [props] = this.cartList.filter((c) => c.produto == p.id);
+          return { ...p, quantidade: props.quantidade, cartItemId: props.id };
         };
 
         this.productList = allProducts
           .filter((p) => this.isProductInCart(p.id))
           .map(addCartProps);
+
+        console.log('produtos', this.productList);
 
         // Calcula o preço total da compra
         this.getTotalPrice();
@@ -103,7 +106,7 @@ export class CartPage implements OnInit, OnDestroy {
 
   // Verifica se o produto está no carrinho
   isProductInCart(idProduto: string) {
-    const filter = this.cartList.some((c) => c[idProduto]);
+    const filter = this.cartList.some((c) => c.produto == idProduto);
     return filter;
   }
 
@@ -184,14 +187,15 @@ export class CartPage implements OnInit, OnDestroy {
     try {
       if (this.cartList.length > 0) {
         this.cartList.forEach((item) => {
+          this.cartService.deleteProductFromCart(item.idCart);
           this.cartService.checkout(item);
-          this.cartService.deleteProductFromCart(item.id);
         });
         this.presentToast('Pedido realizado', 'success');
       }
       this.dismissLoader();
     } catch (error) {
       this.presentToast(error, 'danger');
+      console.log(error);
       this.dismissLoader();
     }
   }

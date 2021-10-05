@@ -1,14 +1,11 @@
 <ion-content fullscreen>
   <ion-slides [options]="slideOpts" class="main-slides">
-    <ion-slide class="main-slides__slide">
-      <img
-        src="https://www.fazfacil.com.br/wp-content/uploads/2016/08/20160831-festa-de-aniversario-parabens-em-casa-700x408.jpg"
-      />
-    </ion-slide>
-    <ion-slide class="main-slides__slide">
-      <img
-        src="https://p2.trrsf.com/image/fget/cf/600/400/images.terra.com/2020/10/21/bolo-de-chocolate-confeitado-50853-1024x752.jpg"
-      />
+    <ion-slide
+      class="main-slides__slide"
+      *ngFor="let image of slideImageList"
+      (click)="presentModalDetails(image.id)"
+    >
+      <img [src]="image.image" />
     </ion-slide>
   </ion-slides>
 
