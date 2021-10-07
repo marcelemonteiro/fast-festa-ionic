@@ -6,4 +6,6 @@
 
 ## Imagens
 
-<img src="./src/assets/login.png" width="300"><img src="./src/assets/home.png" width="300"><img src="./src/assets/cart.png" width="300">
+---
+
+<img src="./src/assets/login.png" width="250"><img src="./src/assets/home.png" width="250"><img src="./src/assets/cart.png" width="250">
