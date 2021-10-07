@@ -92,8 +92,6 @@ export class CategoryPage implements OnInit, OnDestroy {
 
   async presentModalDetails(idProduto: string) {
     const [product] = this.productList.filter((p) => p.id === idProduto);
-    console.log(product);
-
     const modal = await this.modalController.create({
       component: DetailsPage,
       componentProps: {

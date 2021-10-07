@@ -69,7 +69,6 @@ export class CartPage implements OnInit, OnDestroy {
         const filterByUser = (cart: any) =>
           cart.usuario === this.currentUserUid;
         this.cartList = res.filter(filterByUser);
-        console.log('cart', this.cartList);
         this.dismissLoader();
         this.loadProducts();
       });
@@ -92,8 +91,6 @@ export class CartPage implements OnInit, OnDestroy {
         this.productList = allProducts
           .filter((p) => this.isProductInCart(p.id))
           .map(addCartProps);
-
-        console.log('produtos', this.productList);
 
         // Calcula o preço total da compra
         this.getTotalPrice();
@@ -195,7 +192,6 @@ export class CartPage implements OnInit, OnDestroy {
       this.dismissLoader();
     } catch (error) {
       this.presentToast(error, 'danger');
-      console.log(error);
       this.dismissLoader();
     }
   }

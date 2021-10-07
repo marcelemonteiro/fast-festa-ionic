@@ -47,8 +47,6 @@ export class DetailsPage implements OnDestroy, OnInit {
 
   ngOnInit() {
     this.getCart();
-    console.log('USUÁRIO', this.usuario);
-    console.log('ID CARRINHO', this.cartItemId);
   }
 
   async getCart() {

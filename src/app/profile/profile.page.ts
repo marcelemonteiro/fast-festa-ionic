@@ -27,8 +27,6 @@ export class ProfilePage implements OnInit, OnDestroy {
   @ViewChild(IonContent) content: IonContent;
   user: User = {};
   isEditing: boolean;
-  private userId: string;
-  private currentUserUid: string;
   private currentUserEmail: string;
   private userUidSubscription: Subscription;
   private userInfoSubscription: Subscription;
@@ -44,7 +42,6 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.getCurrentUserUid();
     this.getCurrentUserEmail();
     this.getUserInfo();
   }
@@ -54,25 +51,13 @@ export class ProfilePage implements OnInit, OnDestroy {
     this.userInfoSubscription.unsubscribe();
   }
 
-  // Recebe o uid do usuário logado
-  getCurrentUserUid() {
-    this.userUidSubscription = this.authService
-      .getAuth()
-      .authState.subscribe((res) => {
-        if (res) {
-          this.currentUserUid = res.uid;
-          console.log('usuario logado ->', this.currentUserUid);
-        }
-      });
-  }
-
+  // Recebe o email do usuário logado
   getCurrentUserEmail() {
     this.userUidSubscription = this.authService
       .getAuth()
       .authState.subscribe((res) => {
         if (res) {
           this.currentUserEmail = res.email;
-          console.log('usuario logado ->', this.currentUserEmail);
         }
       });
   }
@@ -85,7 +70,6 @@ export class ProfilePage implements OnInit, OnDestroy {
         }
       });
       [this.user] = filtered;
-      console.log(this.user);
     });
   }
 
@@ -111,7 +95,6 @@ export class ProfilePage implements OnInit, OnDestroy {
       this.dismissLoader();
     } catch (error) {
       this.presentToast(error.message, 'danger');
-      console.log(error);
       this.dismissLoader();
     }
   }

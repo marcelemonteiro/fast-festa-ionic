@@ -1,5 +1,5 @@
 import { Product } from 'src/app/interfaces/product';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { User } from '../interfaces/user';
 import { AuthService } from '../services/auth.service';
@@ -11,7 +11,7 @@ import { ProductService } from '../services/product.service';
   templateUrl: './orders.page.html',
   styleUrls: ['./orders.page.scss'],
 })
-export class OrdersPage implements OnInit {
+export class OrdersPage implements OnInit, OnDestroy {
   orders: any;
   productList: any[];
   currentUserUid: string;
@@ -34,13 +34,18 @@ export class OrdersPage implements OnInit {
     this.getProducts();
   }
 
+  ngOnDestroy() {
+    this.orderSubscription.unsubscribe();
+    this.userUidSubscription.unsubscribe();
+    this.productSubscription.unsubscribe();
+  }
+
   getCurrentUserUid() {
     this.userUidSubscription = this.authService
       .getAuth()
       .authState.subscribe((res) => {
         if (res) {
           this.currentUserUid = res.uid;
-          console.log('usuario logado ->', this.currentUserUid);
         }
       });
   }
@@ -52,8 +57,6 @@ export class OrdersPage implements OnInit {
         this.productList = allProducts.filter((produto) =>
           this.isProductInOrder(produto.id)
         );
-
-        console.log('produtos', this.productList);
       });
   }
 
@@ -61,7 +64,6 @@ export class OrdersPage implements OnInit {
     this.orderSubscription = this.cartService.getOrders().subscribe((res) => {
       const filterByUser = (order: any) => order.usuario == this.currentUserUid;
       this.orders = res.filter(filterByUser);
-      console.log('orders:', this.orders);
     });
   }
 
@@ -94,11 +96,9 @@ export class OrdersPage implements OnInit {
     }
   }
 
-  getDate(timestamp: string, idOrder: string) {
+  getDate(idOrder: string) {
     const [filtered] = this.orders.filter((order) => order.idOrder == idOrder);
 
     console.log(filtered.data);
   }
-
-  presentModalDetails(idProduto) {}
 }

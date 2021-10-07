@@ -51,7 +51,6 @@ export class HomePage implements OnInit {
     this.authService.getAuth().authState.subscribe((res) => {
       if (res) {
         this.currentUserUid = res.uid;
-        console.log('usuario logado ->', this.currentUserUid);
       }
     });
   }
@@ -62,10 +61,8 @@ export class HomePage implements OnInit {
       this.cartList = res.filter(
         (cart) => cart.usuario === this.currentUserUid
       );
-      console.log('cart', this.cartList);
       this.loadProducts();
     });
-    console.log('products', this.productList);
   }
 
   // Carrega todos os produtos
@@ -90,8 +87,6 @@ export class HomePage implements OnInit {
       this.slideImageList = this.productList.map((product) => {
         return { image: product.image, id: product.id };
       });
-
-      console.log(this.slideImageList);
 
       this.loadCategories();
     });
