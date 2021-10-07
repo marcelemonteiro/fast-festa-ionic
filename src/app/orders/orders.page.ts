@@ -30,14 +30,12 @@ export class OrdersPage implements OnInit, OnDestroy {
     this.getCurrentUserUid();
     // Recebe lista com todos os pedidos
     this.getOrders();
-    // Recebe lista com as informações dos produtos que estão no pedido
-    this.getProducts();
   }
 
   ngOnDestroy() {
-    this.orderSubscription.unsubscribe();
-    this.userUidSubscription.unsubscribe();
-    this.productSubscription.unsubscribe();
+    // this.orderSubscription.unsubscribe();
+    // this.userUidSubscription.unsubscribe();
+    // this.productSubscription.unsubscribe();
   }
 
   getCurrentUserUid() {
@@ -65,6 +63,9 @@ export class OrdersPage implements OnInit, OnDestroy {
       const filterByUser = (order: any) => order.usuario == this.currentUserUid;
       this.orders = res.filter(filterByUser);
     });
+
+    // Recebe lista com as informações dos produtos que estão no pedido
+    this.getProducts();
   }
 
   isProductInOrder(idProduto: string) {

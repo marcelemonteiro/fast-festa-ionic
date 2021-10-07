@@ -85,12 +85,18 @@ export class CartPage implements OnInit, OnDestroy {
       .subscribe((allProducts) => {
         const addCartProps = (p: Product) => {
           const [props] = this.cartList.filter((c) => c.produto == p.id);
-          return { ...p, quantidade: props.quantidade, cartItemId: props.id };
+          return {
+            ...p,
+            quantidade: props.quantidade,
+            cartItemId: props.idCart,
+          };
         };
 
         this.productList = allProducts
           .filter((p) => this.isProductInCart(p.id))
           .map(addCartProps);
+
+        console.log('p:', this.productList);
 
         // Calcula o preço total da compra
         this.getTotalPrice();
@@ -116,9 +122,10 @@ export class CartPage implements OnInit, OnDestroy {
 
   async removeProduct(idCart: string, event: Event) {
     event.stopPropagation();
+    console.log(idCart);
     try {
-      this.presentToast('Produto removido', 'success');
       await this.cartService.deleteProductFromCart(idCart);
+      await this.presentToast('Produto removido', 'success');
     } catch (error) {
       this.presentToast('Erro ao tentar deletar', 'danger');
     }

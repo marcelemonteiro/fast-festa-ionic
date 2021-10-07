@@ -6,6 +6,7 @@ import { ProductService } from 'src/app/services/product.service';
 import { DetailsPage } from '../details/details.page';
 import { CartService } from 'src/app/services/cart.service';
 import { Subscription } from 'rxjs';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-category',
@@ -16,6 +17,7 @@ export class CategoryPage implements OnInit, OnDestroy {
   category: string;
   cartList: any[];
   productList: any[];
+  currentUserUid: string;
   private cartSubscription: Subscription;
   private productSubscription: Subscription;
 
@@ -24,21 +26,16 @@ export class CategoryPage implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private productService: ProductService,
     private cartService: CartService,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private authService: AuthService
   ) {
     this.category = this.activatedRoute.snapshot.paramMap.get('category');
   }
 
-  async ngOnInit() {
-    await this.presentLoading();
-
-    try {
-      this.loadCart();
-      this.dismissLoader();
-    } catch (error) {
-      console.log(error);
-      this.dismissLoader();
-    }
+  ngOnInit() {
+    this.loadCart();
+    this.dismissLoader();
+    this.getCurrentUserUid();
   }
 
   ngOnDestroy() {
@@ -90,13 +87,23 @@ export class CategoryPage implements OnInit, OnDestroy {
     }
   }
 
+  // Recebe o uid do usuário logado
+  getCurrentUserUid() {
+    this.authService.getAuth().authState.subscribe((res) => {
+      if (res) {
+        this.currentUserUid = res.uid;
+      }
+    });
+  }
+
   async presentModalDetails(idProduto: string) {
     const [product] = this.productList.filter((p) => p.id === idProduto);
     const modal = await this.modalController.create({
       component: DetailsPage,
       componentProps: {
-        id: product.id,
+        idProduto: product.id,
         cartItemId: product.cartItemId,
+        usuario: this.currentUserUid,
         title: product.title,
         image: product.image,
         shop: product.shop,

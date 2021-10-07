@@ -7,28 +7,32 @@ import { first } from 'rxjs/operators';
 import { LoadingController, ModalController } from '@ionic/angular';
 import { DetailsPage } from '../details/details.page';
 import { Product } from 'src/app/interfaces/product';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.page.html',
-  styleUrls: ['./search.page.scss']
+  styleUrls: ['./search.page.scss'],
 })
 export class SearchPage {
-  public loader: any;
-  public cartList: any[];
-  public productList: any[];
-  public productListBackup: any[];
-  public isProductsFiltered: boolean;
+  currentUserUid: string;
+  loader: any;
+  cartList: any[];
+  productList: any[];
+  productListBackup: any[];
+  isProductsFiltered: boolean;
 
   constructor(
     private modalCtrl: ModalController,
     private cartService: CartService,
-    private productService: ProductService
+    private productService: ProductService,
+    private authService: AuthService
   ) {
     this.isProductsFiltered = false;
   }
 
   async ngOnInit() {
+    this.getCurrentUserUid();
     this.cartList = await this.loadCart();
     this.productList = await this.loadProducts();
   }
@@ -40,7 +44,7 @@ export class SearchPage {
       .toPromise();
 
     const addCartProps = (p: Product) => {
-      const [props] = this.cartList.filter(c => c[p.id]);
+      const [props] = this.cartList.filter((c) => c[p.id]);
       if (props) {
         return { ...p, quantidade: props[p.id], cartItemId: props.id };
       } else {
@@ -53,10 +57,7 @@ export class SearchPage {
   }
 
   async loadCart(): Promise<any> {
-    const cartList = await this.cartService
-      .getCart()
-      .pipe(first())
-      .toPromise();
+    const cartList = await this.cartService.getCart().pipe(first()).toPromise();
 
     return cartList;
   }
@@ -69,7 +70,7 @@ export class SearchPage {
       return;
     }
 
-    this.productList = this.productList.filter(currentProduct => {
+    this.productList = this.productList.filter((currentProduct) => {
       if (currentProduct.title && searchTerm) {
         return (
           currentProduct.title.toLowerCase().indexOf(searchTerm.toLowerCase()) >
@@ -80,21 +81,31 @@ export class SearchPage {
     this.isProductsFiltered = true;
   }
 
+  // Recebe o uid do usuário logado
+  getCurrentUserUid() {
+    this.authService.getAuth().authState.subscribe((res) => {
+      if (res) {
+        this.currentUserUid = res.uid;
+      }
+    });
+  }
+
   async presentModalDetails(idProduto: string) {
-    const [product] = this.productList.filter(p => p.id === idProduto);
+    const [product] = this.productList.filter((p) => p.id === idProduto);
 
     const modal = await this.modalCtrl.create({
       component: DetailsPage,
       componentProps: {
-        id: product.id,
+        idProduto: product.id,
         cartItemId: product.cartItemId,
+        usuario: this.currentUserUid,
         title: product.title,
         image: product.image,
         shop: product.shop,
         price: product.price,
         quantidade: product.quantidade,
-        description: product.description
-      }
+        description: product.description,
+      },
     });
     modal.present();
   }

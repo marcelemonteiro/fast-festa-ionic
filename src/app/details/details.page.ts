@@ -55,6 +55,7 @@ export class DetailsPage implements OnDestroy, OnInit {
       .pipe(take(1))
       .subscribe((data) => {
         this.cart = data.filter((c) => c.usuario === this.usuario);
+        console.log(this.cart);
       });
   }
 
