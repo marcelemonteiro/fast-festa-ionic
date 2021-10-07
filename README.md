@@ -4,7 +4,7 @@
 
 :rocket: Desenvolvido com Ionic, Angular e Firebase.
 
-## Imagens
+## Algumas imagens
 
 Login                                           |  Home                                          |  Carrinho
 :----------------------------------------------:|:----------------------------------------------:|:--------------------------------------------:
